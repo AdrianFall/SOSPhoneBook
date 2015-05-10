@@ -4,6 +4,7 @@ package core.model.form;
         import org.hibernate.validator.constraints.NotEmpty;
 
         import javax.validation.constraints.NotNull;
+        import javax.validation.constraints.Pattern;
         import javax.validation.constraints.Size;
 
 /**
@@ -17,7 +18,7 @@ public class RegistrationForm {
     private String username;
 
     @NotNull
-    @NotEmpty @Email
+    @NotEmpty @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$", message = "Please enter a valid email format.")
     private String email;
 
     @Size(min = 5, max = 60)

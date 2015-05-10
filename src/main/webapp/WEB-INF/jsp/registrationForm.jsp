@@ -32,12 +32,12 @@
   <br/>
 
   <label for="emailInput">Email: </label>
-  <form:input path="email" id="emailInput" />
+  <form:input type="email" path="email" id="emailInput" />
   <form:errors path="email" cssClass="error" />
   <br/>
 
   <label for="passwordInput">Password: </label>
-  <form:input path="password" id="passwordInput" />
+  <form:input type="password" path="password" id="passwordInput" />
   <form:errors path="password" cssClass="error" />
   <br/>
 
