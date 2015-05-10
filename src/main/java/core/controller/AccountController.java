@@ -47,7 +47,7 @@ public class AccountController {
         }
     }*/
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView createAccount(@Valid RegistrationForm regForm, BindingResult bResult, Model m) {
+    public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm, BindingResult bResult, Model m) {
         System.out.println("createAccount POSTv2");
         if (bResult.hasErrors()) {
             System.out.println("has errors");
@@ -57,7 +57,8 @@ public class AccountController {
 
         }
         System.out.println("Registered account.");
-        m.addAttribute("message", "Registered account for: " + regForm.toString());
-        return new ModelAndView("registrationForm", MODEL_REG_FORM, regForm);
+        regForm.setPassword(null);
+        //m.addAttribute("message", "Registered account for: " + regForm.toString());
+        return new ModelAndView("registrationForm");
     }
 }

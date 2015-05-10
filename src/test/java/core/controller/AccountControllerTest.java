@@ -14,8 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -116,7 +115,7 @@ public class AccountControllerTest {
                 .andExpect(model().attributeHasNoErrors(MODEL_NAME))
                 // Model attributes
                 .andExpect(model().attribute(MODEL_NAME, hasProperty("email", is(email))))
-                .andExpect(model().attribute(MODEL_NAME, hasProperty("password", is(password))))
+                .andExpect(model().attribute(MODEL_NAME, (hasProperty("password", is(nullValue()))))) // do not expect the model to contain password property
                 .andExpect(model().attribute(MODEL_NAME, hasProperty("username", is(username))));
     }
 
