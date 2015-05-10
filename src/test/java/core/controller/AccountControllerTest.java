@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration("classpath:spring/test-context.xml")
 public class AccountControllerTest {
 
+    private static final String MODEL_NAME = "registrationForm";
+
     @Mock
     private BindingResult mockBindingResult;
 
@@ -42,6 +46,7 @@ public class AccountControllerTest {
         viewResolver.setSuffix(".jsp");
         mockMvc = MockMvcBuilders.standaloneSetup(new AccountController())
                 .setViewResolvers(viewResolver)
+                .alwaysExpect(status().isOk())
                 .build();
     }
 
@@ -54,8 +59,7 @@ public class AccountControllerTest {
     public void testGet() throws Exception {
         mockMvc.perform(get("/account.jsp"))
                 .andDo(print())
-                .andExpect(forwardedUrl("/WEB-INF/jsp/registrationForm.jsp"))
-                .andExpect(status().isOk());
+                .andExpect(forwardedUrl("/WEB-INF/jsp/registrationForm.jsp"));
     }
 
     @Test
@@ -68,11 +72,14 @@ public class AccountControllerTest {
                         .param("password", "")
         )
                 .andDo(print())
+                // Model errors
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasErrors("registrationForm"))
-                .andExpect(status().isOk());
-                /*.andExpect(view().name("registrationForm"))
-                .andExpect(model().hasErrors()*//*attributeHasErrors("registrationForm", "username", "password", "email")*//*);*/
+                .andExpect(model().attributeHasErrors(MODEL_NAME))
+                .andExpect(model().attributeErrorCount(MODEL_NAME, 3))
+                .andExpect(model().attributeHasFieldErrors(MODEL_NAME, "username", "password", "email"));
+
+                /*.andExpect(view().name(MODEL_NAME))
+                .andExpect(model().hasErrors()*//*attributeHasErrors(MODEL_NAME, "username", "password", "email")*//*);*/
     }
 
     @Test
@@ -86,9 +93,11 @@ public class AccountControllerTest {
                 .param("password", password)
                 .param("email", email))
                 .andDo(print())
+                // Model errors
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasErrors("registrationForm"))
-                .andExpect(status().isOk());
+                .andExpect(model().attributeHasErrors(MODEL_NAME))
+                .andExpect(model().attributeErrorCount(MODEL_NAME, 2))
+                .andExpect(model().attributeHasFieldErrors(MODEL_NAME, "email"));
     }
 
     @Test
@@ -98,13 +107,17 @@ public class AccountControllerTest {
         String email = "email@pattern.pl";
 
         mockMvc.perform(post("/account.jsp")
-                        .param("username", email)
-                        .param("password", password)
-                        .param("email", email))
+                .param("username", username)
+                .param("password", password)
+                .param("email", email))
                 .andDo(print())
+                // Model errors
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().attributeHasNoErrors("registrationForm"))
-                .andExpect(status().isOk());
+                .andExpect(model().attributeHasNoErrors(MODEL_NAME))
+                // Model attributes
+                .andExpect(model().attribute(MODEL_NAME, hasProperty("email", is(email))))
+                .andExpect(model().attribute(MODEL_NAME, hasProperty("password", is(password))))
+                .andExpect(model().attribute(MODEL_NAME, hasProperty("username", is(username))));
     }
 
 }
