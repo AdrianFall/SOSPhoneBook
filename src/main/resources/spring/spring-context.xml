@@ -14,6 +14,8 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
 
        <context:component-scan base-package="core.repository.impl.jpa"/>
+       
+       <context:component-scan base-package="core.service"/>
 
        <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
               <property name="username" value="postgres"/>
