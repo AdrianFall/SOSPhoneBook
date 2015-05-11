@@ -25,29 +25,17 @@
 </head>
 <body>
 
-<form:form action="/account" method="POST" modelAttribute="registrationForm">
+<form:form action="/account" method="POST" modelAttribute="loginForm">
   <label for="usernameInput">Name: </label>
   <form:input path="username" id="usernameInput" />
   <form:errors path="username" cssClass="error" />
   <br/>
 
-  <label for="emailInput">Email: </label>
-  <form:input type="email" path="email" id="emailInput" />
-  <form:errors path="email" cssClass="error" />
-  <br/>
 
   <label for="passwordInput">Password: </label>
   <form:input type="password" path="password" id="passwordInput" />
   <form:errors path="password" cssClass="error" />
   <br/>
-
-  <label for="confirmPasswordInput">Confirm Password: </label>
-  <form:input type="password" path="confirmPassword" id="confirmPasswordInput" />
-  <form:errors path="confirmPassword" cssClass="error" />
-  <br/>
-
-<%--  <form:errors path="" cssClass="error"/>--%>
-
 
   <input type="submit" value="Submit" />
 </form:form>

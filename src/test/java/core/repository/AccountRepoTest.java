@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Adrian on 10/05/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:spring/spring-context.xml")
+@ContextConfiguration("classpath:spring/prod/spring-context.xml")
 public class AccountRepoTest {
 
     @Autowired

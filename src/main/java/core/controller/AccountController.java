@@ -1,6 +1,9 @@
 package core.controller;
 
+import core.entity.Account;
 import core.model.form.RegistrationForm;
+import core.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,9 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/account")
 public class AccountController {
+
+    @Autowired
+    AccountService accountService;
 
     public static final String MODEL_REG_FORM = "registrationForm";
 
@@ -49,14 +55,33 @@ public class AccountController {
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm, BindingResult bResult, Model m) {
         System.out.println("createAccount POSTv2");
+
+        // Validate the form password matches
+        if (!regForm.getPassword().equals(regForm.getConfirmPassword())) {
+            bResult.rejectValue("password", "passwordMismatch");
+            bResult.rejectValue("confirmPassword", "passwordMismatch");
+            System.out.println("Password match validation - failed.");
+        }
+
         if (bResult.hasErrors()) {
             System.out.println("has errors");
             return new ModelAndView("registrationForm");
-        } else {
-            System.out.println("has no errors. And the email is : " + regForm.getEmail());
-
         }
-        System.out.println("Registered account.");
+
+
+
+        System.out.println("has no errors. And the email is : " + regForm.getEmail());
+        Account newAcc = new Account();
+        newAcc.setEmail(regForm.getEmail());
+        newAcc.setPassword(regForm.getPassword());
+        newAcc.setUsername(regForm.getUsername());
+
+        Account createdAcc = accountService.createAccount(newAcc);
+        if (createdAcc == null) {
+            System.out.println("Account not created.");
+        } else {
+            System.out.println("Registered account. with id: " + createdAcc.getId());
+        }
         regForm.setPassword(null);
         //m.addAttribute("message", "Registered account for: " + regForm.toString());
         return new ModelAndView("registrationForm");

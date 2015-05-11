@@ -2,6 +2,7 @@ package core.model.form;
 
         import org.hibernate.validator.constraints.Email;
         import org.hibernate.validator.constraints.NotEmpty;
+        import validation.PasswordMatches;
 
         import javax.validation.constraints.NotNull;
         import javax.validation.constraints.Pattern;
@@ -10,6 +11,7 @@ package core.model.form;
 /**
  * Created by Adrian on 10/05/2015.
  */
+/*@PasswordMatches()*/
 public class RegistrationForm {
 
 
@@ -18,12 +20,16 @@ public class RegistrationForm {
     private String username;
 
     @NotNull
-    @NotEmpty @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$", message = "Please enter a valid email format.")
+    @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$", message = "Please enter a valid email format.")
     private String email;
 
-    @Size(min = 5, max = 60)
+    @Size(min = 5, max = 120)
     @NotNull
     private String password;
+
+    @Size(min = 5, max = 120)
+    @NotNull
+    private String confirmPassword;
 
     public String getUsername() {
         return username;
@@ -47,5 +53,13 @@ public class RegistrationForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }
