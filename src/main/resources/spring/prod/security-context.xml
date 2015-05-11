@@ -12,7 +12,7 @@
        <intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
        <intercept-url pattern="/index*" access="isAnonymous()"/>
        <intercept-url pattern="/account*" access="isAnonymous()"/>
-       <intercept-url pattern="/**" access="USER" />
+      <!-- <intercept-url pattern="/**" access="USER" />-->
        <form-login login-page='/login.jsp'/>
 
    </http>

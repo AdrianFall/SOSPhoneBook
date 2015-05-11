@@ -13,12 +13,21 @@ import javax.persistence.Id;
 public class Account {
 
     @Id @GeneratedValue
-    @NotNull
     private Long id;
 
     private String username;
     private String password;
     private String email;
+
+    public Account(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public Account() {
+
+    }
 
     public Long getId() {
         return id;

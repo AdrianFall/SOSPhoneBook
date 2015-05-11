@@ -33,7 +33,10 @@ public class AccountController {
     @RequestMapping(method = RequestMethod.GET)
     public String getFormAccount(Model m) {
         System.out.println("Getting form account.");
-        m.addAttribute("registrationForm", new RegistrationForm());
+        RegistrationForm tempRegForm = new RegistrationForm();
+        tempRegForm.setUsername("testusername");
+        tempRegForm.setEmail("email@em.ail");
+        m.addAttribute("registrationForm",tempRegForm);
         return "registrationForm";
     }
 
@@ -78,6 +81,7 @@ public class AccountController {
 
         Account createdAcc = accountService.createAccount(newAcc);
         if (createdAcc == null) {
+            bResult.rejectValue("username", "usernameExists");
             System.out.println("Account not created.");
         } else {
             System.out.println("Registered account. with id: " + createdAcc.getId());

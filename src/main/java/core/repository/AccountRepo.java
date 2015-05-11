@@ -9,6 +9,7 @@ public interface AccountRepo {
 
     public Account findAccount(Long id);
     public Account findAccountByUsername(String username);
+    public Account findAccountByEmail(String email);
     public Account createAccount(Account acc);
 
 }

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:spring/prod/spring-context.xml")
+@Transactional
 public class AccountRepoTest {
 
     @Autowired
@@ -26,26 +27,31 @@ public class AccountRepoTest {
     private Account firstAcc;
 
     @Before
-    @Transactional
-    @Rollback(false) // Whether or not the transaction for the annotated method should be rolled back after the method has completed.
+
+    @Rollback(true) // Whether or not the transaction for the annotated method should be rolled back after the method has completed.
     public void setup() throws  Exception{
         firstAcc = new Account();
-        firstAcc.setEmail("testemail");
+        firstAcc.setEmail("xa@xa");
         firstAcc.setUsername("hombre");
         firstAcc.setPassword("superhard");
         repo.createAccount(firstAcc);
     }
 
     @Test
-    @Transactional
+
     public void findTheFirstAccountById() throws Exception {
         assertNotNull(repo.findAccount(firstAcc.getId()));
     }
 
     @Test
-    @Transactional
+
     public void findAccountByUserName() throws Exception {
         assertNotNull(repo.findAccountByUsername(firstAcc.getUsername()));
+    }
+
+    @Test
+    public void findAccountByEmail() throws Exception {
+        assertNotNull(repo.findAccountByEmail(firstAcc.getEmail()));
     }
 
 }

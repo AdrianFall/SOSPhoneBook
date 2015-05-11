@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
  * Created by Adrian on 10/05/2015.
  */
 @Service
-@Transactional
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -22,10 +21,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createAccount(Account acc) {
-        if(accountRepo.findAccountByUsername(acc.getUsername()) == null)
+        if(acc != null && accountRepo.findAccountByUsername(acc.getUsername()) == null)
             return accountRepo.createAccount(acc);
         else
             return null;
-
     }
+
 }
