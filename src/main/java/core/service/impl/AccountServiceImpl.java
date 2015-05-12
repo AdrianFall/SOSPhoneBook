@@ -3,6 +3,7 @@ package core.service.impl;
 import core.entity.Account;
 import core.repository.AccountRepo;
 import core.service.AccountService;
+import core.service.exception.AccountExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +21,11 @@ public class AccountServiceImpl implements AccountService {
     private AccountRepo accountRepo;
 
     @Override
-    public Account createAccount(Account acc) {
-        if(acc != null && accountRepo.findAccountByUsername(acc.getUsername()) == null)
-            return accountRepo.createAccount(acc);
-        else
-            return null;
+    public Account createAccount(Account acc) throws AccountExistsException {
+        if (accountRepo.findAccountByUsername(acc.getUsername()) != null) {
+            throw new AccountExistsException("Account username already exists.");
+        }
+        return accountRepo.createAccount(acc);
     }
 
 }

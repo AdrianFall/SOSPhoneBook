@@ -3,6 +3,8 @@ package core.controller;
 import core.entity.Account;
 import core.model.form.RegistrationForm;
 import core.service.AccountService;
+import core.service.exception.AccountExistsException;
+import core.service.exception.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +61,7 @@ public class AccountController {
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm, BindingResult bResult, Model m) {
         System.out.println("createAccount POSTv2");
 
-        // Validate the form password matches
+        // Validate the form password & passConfirm match
         if (!regForm.getPassword().equals(regForm.getConfirmPassword())) {
             bResult.rejectValue("password", "passwordMismatch");
             bResult.rejectValue("confirmPassword", "passwordMismatch");
@@ -67,27 +69,46 @@ public class AccountController {
         }
 
         if (bResult.hasErrors()) {
-            System.out.println("has errors");
+            // Clean the password fields before returning the form again
+            regForm.setPassword("");
+            regForm.setConfirmPassword("");
+
             return new ModelAndView("registrationForm");
         }
 
-
-
         System.out.println("has no errors. And the email is : " + regForm.getEmail());
+        // Build up the Account entity (to be used for createAcc(arg))
         Account newAcc = new Account();
         newAcc.setEmail(regForm.getEmail());
         newAcc.setPassword(regForm.getPassword());
         newAcc.setUsername(regForm.getUsername());
 
-        Account createdAcc = accountService.createAccount(newAcc);
+
+
+        try {// Attempt acc creation
+            accountService.createAccount(newAcc);
+
+
+        } catch(AccountExistsException aee) {
+            bResult.rejectValue("username", "usernameExists");
+        } finally {
+            // TODO change to different view upon account creation
+
+            // Clean the password fields before returning the form again
+            regForm.setPassword("");
+            regForm.setConfirmPassword("");
+            return new ModelAndView("registrationForm");
+        }
+       /* Account createdAcc = accountService.createAccount(newAcc);
         if (createdAcc == null) {
             bResult.rejectValue("username", "usernameExists");
             System.out.println("Account not created.");
         } else {
             System.out.println("Registered account. with id: " + createdAcc.getId());
         }
+        // Clean the passwords from the regForm
         regForm.setPassword(null);
-        //m.addAttribute("message", "Registered account for: " + regForm.toString());
-        return new ModelAndView("registrationForm");
+        //m.addAttribute("message", "Registered account for: " + regForm.toString());*/
+
     }
 }

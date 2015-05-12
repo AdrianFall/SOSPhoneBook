@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:spring/test/test-context.xml")
+@ContextConfiguration("classpath:spring/prod/spring-context.xml")
 @Transactional
 public class AccountControllerTest {
 
@@ -145,7 +145,8 @@ public class AccountControllerTest {
                 .andExpect(model().attributeHasNoErrors(MODEL_NAME))
                 // Model attributes
                 .andExpect(model().attribute(MODEL_NAME, hasProperty("email", is(email))))
-                .andExpect(model().attribute(MODEL_NAME, (hasProperty("password", is(nullValue()))))) // do not expect the model to contain password property
+                .andExpect(model().attribute(MODEL_NAME, hasProperty("password", isEmptyString()))) // do not expect the model to contain password property
+                .andExpect(model().attribute(MODEL_NAME, hasProperty("confirmPassword", isEmptyString())))
                 .andExpect(model().attribute(MODEL_NAME, hasProperty("username", is(username))));
     }
 
