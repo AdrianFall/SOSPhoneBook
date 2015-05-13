@@ -32,7 +32,6 @@ public class AccountRepoTest {
     public void setup() throws  Exception{
         firstAcc = new Account();
         firstAcc.setEmail("xa@xa");
-        firstAcc.setUsername("hombre");
         firstAcc.setPassword("superhard");
         repo.createAccount(firstAcc);
     }
@@ -40,11 +39,6 @@ public class AccountRepoTest {
     @Test
     public void findTheFirstAccountById() throws Exception {
         assertNotNull(repo.findAccount(firstAcc.getId()));
-    }
-
-    @Test
-    public void findAccountByUserName() throws Exception {
-        assertNotNull(repo.findAccountByUsername(firstAcc.getUsername()));
     }
 
     @Test

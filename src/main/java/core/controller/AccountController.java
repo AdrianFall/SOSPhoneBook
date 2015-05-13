@@ -32,11 +32,10 @@ public class AccountController {
     public static final String MODEL_REG_FORM = "registrationForm";
 
     @RequestMapping(value = "account", method = RequestMethod.GET)
-    public String getFormAccount(Model m) {
+    public String getRegistrationForm(Model m) {
         System.out.println("Getting form account.");
         RegistrationForm tempRegForm = new RegistrationForm();
-        tempRegForm.setUsername("testusername");
-        tempRegForm.setEmail("email@em.ail");
+        tempRegForm.setEmail("def@au.lt");
         m.addAttribute("registrationForm",tempRegForm);
         return "registrationForm";
     }
@@ -84,7 +83,6 @@ public class AccountController {
         Account newAcc = new Account();
         newAcc.setEmail(regForm.getEmail());
         newAcc.setPassword(regForm.getPassword());
-        newAcc.setUsername(regForm.getUsername());
 
 
         try {// Attempt acc creation

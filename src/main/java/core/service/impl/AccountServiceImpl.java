@@ -21,9 +21,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createAccount(Account acc) throws UsernameExistsException, EmailExistsException {
-        if (accountRepo.findAccountByUsername(acc.getUsername()) != null) {
-            throw new UsernameExistsException("Account username already exists.");
-        } else if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
+        if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
             throw new EmailExistsException("Email already exists.");
         }
         return accountRepo.createAccount(acc);

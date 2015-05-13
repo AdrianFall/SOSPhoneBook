@@ -75,13 +75,13 @@ public class AccountControllerTest {
     public void testCreateAccountWithEmptyParams() throws Exception {
        /* when(mockBindingResult.hasErrors()).thenReturn(true);*/
 
-        mockMvc.perform(postForm("", "", "", ""))
+        mockMvc.perform(postForm("", "", ""))
                 .andDo(print())
                 // Model errors
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasErrors(REGISTRATION_FORM_MODEL))
                 //.andExpect(model().attributeErrorCount(REGISTRATION_FORM_MODEL, 3))
-                .andExpect(model().attributeHasFieldErrors(REGISTRATION_FORM_MODEL, "username", "password", "email"));
+                .andExpect(model().attributeHasFieldErrors(REGISTRATION_FORM_MODEL, "password", "email"));
 
                 /*.andExpect(view().name(REGISTRATION_FORM_MODEL))
                 .andExpect(model().hasErrors()*//*attributeHasErrors(REGISTRATION_FORM_MODEL, "username", "password", "email")*//*);*/
@@ -93,7 +93,7 @@ public class AccountControllerTest {
         String password = "passww";
         String email = "no@dot";
 
-        mockMvc.perform(postForm(username, password, password, email))
+        mockMvc.perform(postForm(password, password, email))
                 .andDo(print())
                 // Model errors
                 .andExpect(model().hasErrors())
@@ -109,7 +109,7 @@ public class AccountControllerTest {
         String confirmPassword = "somepaszword";
         String email = "email@pattern.pl";
 
-        mockMvc.perform(postForm(username, password, confirmPassword, email))
+        mockMvc.perform(postForm(password, confirmPassword, email))
                 .andDo(print())
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasErrors(REGISTRATION_FORM_MODEL))
@@ -118,9 +118,9 @@ public class AccountControllerTest {
 
     }
 
-    private MockHttpServletRequestBuilder postForm(String username, String password, String confirmPassword, String email) {
+    private MockHttpServletRequestBuilder postForm(String password, String confirmPassword, String email) {
         return post("/account.jsp")
-                .param("username", username)
+                .param("email", email)
                 .param("password", password)
                 .param("confirmPassword", confirmPassword);
     }
@@ -130,7 +130,7 @@ public class AccountControllerTest {
         String username = "usernametestm";
         String password = "passww";
         String email = "email@pattern.pl";
-        Account createdAcc = new Account(username, password, email);
+        Account createdAcc = new Account(email, password);
 
         when(accountService.createAccount(any(Account.class))).thenReturn(createdAcc);
 
@@ -147,7 +147,7 @@ public class AccountControllerTest {
                 .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("email", is(email))))
                 .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("password", isEmptyString()))) // do not expect the model to contain password property
                 .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("confirmPassword", isEmptyString())))
-                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("username", is(username))));
+                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, not(hasProperty("username", is(username)))));
 
         // Login
       /*  mockMvc.perform(post("/login")

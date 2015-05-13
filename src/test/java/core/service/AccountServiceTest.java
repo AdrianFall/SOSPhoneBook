@@ -40,7 +40,6 @@ public class AccountServiceTest {
     @Before
     public void setup() throws Exception {
         Account acc = new Account();
-        acc.setUsername("adrian");
         acc.setPassword("somepass");
         acc.setEmail("someemail");
         firstAcc = accountService.createAccount(acc);
@@ -50,28 +49,13 @@ public class AccountServiceTest {
     public void testFirstAccount() throws  Exception {
         assertNotNull(firstAcc);
         assertNotNull(firstAcc.getId());
-        assertEquals("adrian", firstAcc.getUsername());
         assertEquals("somepass", firstAcc.getPassword());
         assertEquals("someemail", firstAcc.getEmail());
     }
 
     @Test
-    public void testCreateAccountWithTheSameUsername() throws Exception {
-        Account newAcc = new Account();
-        newAcc.setUsername("adrian");
-        newAcc.setPassword("somepasswordz");
-        newAcc.setEmail("newemailzor");
-
-        // Expect the UsernameExistsException
-        exception.expect(UsernameExistsException.class);
-        exception.expectMessage("Account username already exists.");
-        accountService.createAccount(newAcc);
-    }
-
-    @Test
     public void testCreateAccountWithTheSameEmail() throws Exception {
         Account newAcc = new Account();
-        newAcc.setUsername("LegitlyNewUsername");
         newAcc.setPassword("somepasswordz");
         newAcc.setEmail(firstAcc.getEmail());
 

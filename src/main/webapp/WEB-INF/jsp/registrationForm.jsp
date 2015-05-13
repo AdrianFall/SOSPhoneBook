@@ -26,11 +26,6 @@
 <body>
 
 <form:form action="/account" method="POST" modelAttribute="registrationForm">
-  <label for="usernameInput">Name: </label>
-  <form:input path="username" id="usernameInput" />
-  <form:errors path="username" cssClass="error" />
-  <br/>
-
   <label for="emailInput">Email: </label>
   <form:input type="email" path="email" id="emailInput" />
   <form:errors path="email" cssClass="error" />

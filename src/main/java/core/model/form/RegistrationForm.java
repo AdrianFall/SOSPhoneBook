@@ -15,9 +15,7 @@ package core.model.form;
 public class RegistrationForm {
 
 
-    @Size(min=3, max=30)
-    @NotNull
-    private String username;
+
 
     @NotNull
     @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$", message = "Please enter a valid email format.")
@@ -30,14 +28,6 @@ public class RegistrationForm {
     @Size(min = 5, max = 120)
     @NotNull
     private String confirmPassword;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getEmail() {
         return email;

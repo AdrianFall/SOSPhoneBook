@@ -6,7 +6,6 @@ CREATE TABLE account
   id serial NOT NULL,
   email character varying(255) NOT NULL,
   password character varying(255) NOT NULL,
-  username character varying(255) NOT NULL,
   enabled boolean NOT NULL DEFAULT TRUE,
   CONSTRAINT account_pkey PRIMARY KEY (id)
 );
@@ -20,10 +19,10 @@ CREATE TABLE role
   CONSTRAINT role_fkey FOREIGN KEY (account_id) REFERENCES account (id)
 );
 
-INSERT INTO account(email, password, username)
-VALUES ('jose@jo.se', 'superhard', 'jose');
-INSERT INTO account(email, password, username)
-VALUES ('adrianq92@hotmail.com', 'adrianq', 'adiadi');
+INSERT INTO account(email, password)
+VALUES ('jose@jo.se', 'superhard');
+INSERT INTO account(email, password)
+VALUES ('adrianq92@hotmail.com', 'adrianq');
 
 INSERT INTO role(account_id, role)
 VALUES (1, 'ROLE_USER');
