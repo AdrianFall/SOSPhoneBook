@@ -51,5 +51,10 @@
 
        <!-- Authentication -->
         <bean id="accountDetailsService" class="core.service.security.AccountDetailsService"/>
+        <!-- Password encoding -->
+        <bean id="bcryptEncoder" name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+
+
 
 </beans>

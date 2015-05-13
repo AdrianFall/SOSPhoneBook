@@ -6,6 +6,7 @@ import core.service.AccountService;
 import core.service.exception.EmailExistsException;
 import core.service.exception.UsernameExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private AccountRepo accountRepo;
 
     @Override
@@ -24,6 +28,10 @@ public class AccountServiceImpl implements AccountService {
         if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
             throw new EmailExistsException("Email already exists.");
         }
+
+        // Hash the password
+        acc.setPassword(passwordEncoder.encode(acc.getPassword()));
+
         return accountRepo.createAccount(acc);
     }
 }

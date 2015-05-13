@@ -35,10 +35,10 @@
    </http>
 
 
-
-
     <authentication-manager alias="authenticationManager">
-        <authentication-provider user-service-ref="accountDetailsService"/>
+        <authentication-provider user-service-ref="accountDetailsService">
+            <password-encoder ref="bcryptEncoder"/>
+        </authentication-provider>
     </authentication-manager>
 
 

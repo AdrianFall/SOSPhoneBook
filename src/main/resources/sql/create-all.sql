@@ -20,9 +20,9 @@ CREATE TABLE role
 );
 
 INSERT INTO account(email, password)
-VALUES ('jose@jo.se', 'superhard');
+VALUES ('jose@jo.se', '$2a$10$kMVhUDUeDSdZOeCOboXzXOwy9f4VXvIp2yE0OEHIWA.BTlaX6.vpq');
 INSERT INTO account(email, password)
-VALUES ('adrianq92@hotmail.com', 'adrianq');
+VALUES ('adrianq92@hotmail.com', '$2a$10$AK1rKs1jY0W0qjACmoDioO7gzCzJIxAfXDBgOi0gfyYaf.adw8m7y');
 
 INSERT INTO role(account_id, role)
 VALUES (1, 'ROLE_USER');

@@ -32,7 +32,8 @@ public class AuthenticationTest {
     private WebApplicationContext context;
 
     private MockMvc mockMvc;
-
+    private static final String VALID_EMAIL = "adrianq92@hotmail.com";
+    private static final String VALID_PASSWORD = "adiadi";
 
 
     @Before
@@ -44,9 +45,7 @@ public class AuthenticationTest {
 
     @Test
     public void wrongPasswordLogin() throws Exception {
-        mockMvc.perform(post("/login")
-                .param("email", "adrianq92@hotmail.com")
-                .param("password", "fail"))
+        mockMvc.perform(postLogin(VALID_EMAIL, "invalid"))
                 .andExpect(unauthenticated());
 
     }
@@ -58,8 +57,15 @@ public class AuthenticationTest {
     }
 
     @Test
+    public void withInvalidCsrfToken() throws Exception {
+        mockMvc.perform(postLogin(VALID_EMAIL, VALID_PASSWORD)
+                        .with(csrf().useInvalidToken()))
+                .andExpect(unauthenticated());
+    }
+
+    @Test
     public void authenticatedLogin() throws Exception {
-        mockMvc.perform(postLogin("adrianq92@hotmail.com", "adrianq")
+        mockMvc.perform(postLogin(VALID_EMAIL, VALID_PASSWORD)
                 .with(csrf()))
                 .andExpect(authenticated());
 

@@ -13,9 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by Adrian on 10/05/2015.
@@ -49,7 +47,7 @@ public class AccountServiceTest {
     public void testFirstAccount() throws  Exception {
         assertNotNull(firstAcc);
         assertNotNull(firstAcc.getId());
-        assertEquals("somepass", firstAcc.getPassword());
+        assertNotEquals("somepass", firstAcc.getPassword()); // Since it should be hashed
         assertEquals("someemail", firstAcc.getEmail());
     }
 
