@@ -1,20 +1,19 @@
 package core.controller;
 
 import core.entity.Account;
+import core.model.form.LoginForm;
 import core.model.form.RegistrationForm;
 import core.service.AccountService;
-import core.service.exception.AccountExistsException;
-import core.service.exception.InvalidArgumentException;
+import core.service.exception.EmailExistsException;
+import core.service.exception.UsernameExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -24,7 +23,7 @@ import javax.validation.Valid;
  * Created by Adrian on 09/05/2015.
  */
 @Controller
-@RequestMapping("/account")
+
 public class AccountController {
 
     @Autowired
@@ -32,7 +31,7 @@ public class AccountController {
 
     public static final String MODEL_REG_FORM = "registrationForm";
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "account", method = RequestMethod.GET)
     public String getFormAccount(Model m) {
         System.out.println("Getting form account.");
         RegistrationForm tempRegForm = new RegistrationForm();
@@ -42,22 +41,27 @@ public class AccountController {
         return "registrationForm";
     }
 
-/*    @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody String createAccount(@Valid @ModelAttribute("registrationForm") RegistrationForm regForm,
-                                              BindingResult validationResult, Model m) {
-        System.out.println("CREATE ACCOUNT.");
-
-        if (validationResult.hasErrors()) {
-            System.out.println("HAS ERRORS.");
-            return "Has Errors";
-        } else {
-            System.out.println("Has NO Errors.");
-            System.out.println("Email = " + regForm.getEmail());
-            m.addAttribute("email", regForm.getEmail());
-            return "No Errors";
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login(@Valid @ModelAttribute LoginForm loginForm,
+                              BindingResult bResult,
+                              @RequestParam(value = "error", required = false) String error,
+                              @RequestParam(value = "logout", required = false) String logout) {
+        ModelAndView model = new ModelAndView();
+        if (error != null) {
+            bResult.rejectValue("email", "invalidCredentials");
+            model.addObject("error", "Invalid credentials.");
         }
-    }*/
-    @RequestMapping(method = RequestMethod.POST)
+
+        if (logout != null) {
+            model.addObject("msg", "Logged out.");
+        }
+
+        model.setViewName("login");
+        return model;
+    }
+
+
+    @RequestMapping(value = "account", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm, BindingResult bResult, Model m) {
         System.out.println("createAccount POSTv2");
 
@@ -76,7 +80,6 @@ public class AccountController {
             return new ModelAndView("registrationForm");
         }
 
-        System.out.println("has no errors. And the email is : " + regForm.getEmail());
         // Build up the Account entity (to be used for createAcc(arg))
         Account newAcc = new Account();
         newAcc.setEmail(regForm.getEmail());
@@ -84,13 +87,15 @@ public class AccountController {
         newAcc.setUsername(regForm.getUsername());
 
 
-
         try {// Attempt acc creation
             accountService.createAccount(newAcc);
 
-
-        } catch(AccountExistsException aee) {
+        } catch(UsernameExistsException aee) {
+            System.out.println("Catched UsernameExistsException");
             bResult.rejectValue("username", "usernameExists");
+        } catch(EmailExistsException eee) {
+            System.out.println("Catched EmailexistsException, attaching the rejected value to BindingREsult");
+            bResult.rejectValue("email", "emailExists");
         } finally {
             // TODO change to different view upon account creation
 

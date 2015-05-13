@@ -1,7 +1,8 @@
 package core.service;
 
 import core.entity.Account;
-import core.service.exception.AccountExistsException;
+import core.service.exception.EmailExistsException;
+import core.service.exception.UsernameExistsException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,9 +62,22 @@ public class AccountServiceTest {
         newAcc.setPassword("somepasswordz");
         newAcc.setEmail("newemailzor");
 
-        // Expect the AccountExistsException
-        exception.expect(AccountExistsException.class);
+        // Expect the UsernameExistsException
+        exception.expect(UsernameExistsException.class);
         exception.expectMessage("Account username already exists.");
+        accountService.createAccount(newAcc);
+    }
+
+    @Test
+    public void testCreateAccountWithTheSameEmail() throws Exception {
+        Account newAcc = new Account();
+        newAcc.setUsername("LegitlyNewUsername");
+        newAcc.setPassword("somepasswordz");
+        newAcc.setEmail(firstAcc.getEmail());
+
+        // Expect the EmailExistsException
+        exception.expect(EmailExistsException.class);
+        exception.expectMessage("Email already exists.");
         accountService.createAccount(newAcc);
     }
 }

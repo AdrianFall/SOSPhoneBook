@@ -49,5 +49,7 @@
 
        <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 
+       <!-- Authentication -->
+        <bean id="accountDetailsService" class="core.service.security.AccountDetailsService"/>
 
 </beans>

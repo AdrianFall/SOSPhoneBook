@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import static org.hamcrest.Matchers.*;
@@ -37,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AccountControllerTest {
 
-    private static final String MODEL_NAME = "registrationForm";
+    private static final String REGISTRATION_FORM_MODEL = "registrationForm";
+    private static final String LOGIN_FORM_MODEL = "loginForm";
 
     @InjectMocks
     AccountController controller;
@@ -79,12 +79,12 @@ public class AccountControllerTest {
                 .andDo(print())
                 // Model errors
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasErrors(MODEL_NAME))
-                //.andExpect(model().attributeErrorCount(MODEL_NAME, 3))
-                .andExpect(model().attributeHasFieldErrors(MODEL_NAME, "username", "password", "email"));
+                .andExpect(model().attributeHasErrors(REGISTRATION_FORM_MODEL))
+                //.andExpect(model().attributeErrorCount(REGISTRATION_FORM_MODEL, 3))
+                .andExpect(model().attributeHasFieldErrors(REGISTRATION_FORM_MODEL, "username", "password", "email"));
 
-                /*.andExpect(view().name(MODEL_NAME))
-                .andExpect(model().hasErrors()*//*attributeHasErrors(MODEL_NAME, "username", "password", "email")*//*);*/
+                /*.andExpect(view().name(REGISTRATION_FORM_MODEL))
+                .andExpect(model().hasErrors()*//*attributeHasErrors(REGISTRATION_FORM_MODEL, "username", "password", "email")*//*);*/
     }
 
     @Test
@@ -97,9 +97,9 @@ public class AccountControllerTest {
                 .andDo(print())
                 // Model errors
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasErrors(MODEL_NAME))
-                //.andExpect(model().attributeErrorCount(MODEL_NAME, 2))
-                .andExpect(model().attributeHasFieldErrors(MODEL_NAME, "email"));
+                .andExpect(model().attributeHasErrors(REGISTRATION_FORM_MODEL))
+                //.andExpect(model().attributeErrorCount(REGISTRATION_FORM_MODEL, 2))
+                .andExpect(model().attributeHasFieldErrors(REGISTRATION_FORM_MODEL, "email"));
     }
 
     @Test
@@ -112,8 +112,8 @@ public class AccountControllerTest {
         mockMvc.perform(postForm(username, password, confirmPassword, email))
                 .andDo(print())
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasErrors(MODEL_NAME))
-                .andExpect(model().attributeHasFieldErrors(MODEL_NAME, "password", "confirmPassword"));
+                .andExpect(model().attributeHasErrors(REGISTRATION_FORM_MODEL))
+                .andExpect(model().attributeHasFieldErrors(REGISTRATION_FORM_MODEL, "password", "confirmPassword"));
 
 
     }
@@ -142,12 +142,20 @@ public class AccountControllerTest {
                 .andDo(print())
                 // Model errors
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().attributeHasNoErrors(MODEL_NAME))
+                .andExpect(model().attributeHasNoErrors(REGISTRATION_FORM_MODEL))
                 // Model attributes
-                .andExpect(model().attribute(MODEL_NAME, hasProperty("email", is(email))))
-                .andExpect(model().attribute(MODEL_NAME, hasProperty("password", isEmptyString()))) // do not expect the model to contain password property
-                .andExpect(model().attribute(MODEL_NAME, hasProperty("confirmPassword", isEmptyString())))
-                .andExpect(model().attribute(MODEL_NAME, hasProperty("username", is(username))));
+                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("email", is(email))))
+                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("password", isEmptyString()))) // do not expect the model to contain password property
+                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("confirmPassword", isEmptyString())))
+                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("username", is(username))));
+
+        // Login
+      /*  mockMvc.perform(post("/login")
+                .param("email", email)
+                .param("password", password))
+                .andDo(print())
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().attributeHasNoErrors(LOGIN_FORM_MODEL));*/
     }
 
 }
