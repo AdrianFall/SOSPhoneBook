@@ -1,6 +1,7 @@
 package core.controller;
 
 import core.entity.Account;
+import core.entity.VerificationToken;
 import core.service.AccountService;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,9 @@ public class AccountControllerTest {
 
     @Mock
     private AccountService accountService;
+
+
+
 
     private MockMvc mockMvc;
 
@@ -156,6 +160,11 @@ public class AccountControllerTest {
                 .andDo(print())
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attributeHasNoErrors(LOGIN_FORM_MODEL));*/
+    }
+
+    @Test
+    public void testRegistrationConfirm() throws Exception {
+        VerificationToken token = new VerificationToken();
     }
 
 }

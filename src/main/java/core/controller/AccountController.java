@@ -138,10 +138,7 @@ public class AccountController {
             emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
 
 
-        } catch(UsernameExistsException aee) {
-            System.out.println("Catched UsernameExistsException");
-            bResult.rejectValue("username", "usernameExists");
-        } catch(EmailExistsException eee) {
+        }  catch(EmailExistsException eee) {
             System.out.println("Catched EmailexistsException, attaching the rejected value to BindingREsult");
             bResult.rejectValue("email", "emailExists");
         } finally {

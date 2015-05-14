@@ -80,4 +80,21 @@
             <property name="defaultEncoding" value="UTF-8"/>
         </bean>
 
+        <!-- AuthenticationFailureHandler  -->
+        <!--<bean id="authenticationFailureHandler" class="resources.authentication.LoginAuthenticationFailureHandler"/>-->
+
+        <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+
+                <property name="exceptionMappings">
+                    <props>
+                        <prop key="org.springframework.security.authentication.BadCredentialsException">/login/badCredentials</prop>
+                        <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login/credentialsExpired</prop>
+                        <prop key="org.springframework.security.authentication.AccountExpiredException">/login/accountExpired</prop>
+                        <prop key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
+                        <prop key="org.springframework.security.authentication.DisabledException">/login/accountDisabled</prop>
+                    </props>
+
+                </property>
+        </bean>
+
 </beans>

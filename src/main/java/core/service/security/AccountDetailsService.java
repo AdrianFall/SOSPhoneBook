@@ -3,6 +3,7 @@ package core.service.security;
 import core.entity.Account;
 import core.entity.Role;
 import core.repository.AccountRepo;
+import core.service.exception.DisabledAccountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +31,7 @@ public class AccountDetailsService implements org.springframework.security.core.
         Account acc = accountRepository.findAccountByEmail(email);
         if (acc == null) {
             System.out.println("AccountDetailsService - No username was found.");
-            throw new UsernameNotFoundException("No username found. Provided email was: " + email);
+            throw new UsernameNotFoundException("Email not found");
         }
 
         List<GrantedAuthority> authorities =

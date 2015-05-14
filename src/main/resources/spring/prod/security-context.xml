@@ -26,7 +26,8 @@
                default-target-url="/login.html?msg=success"
                username-parameter="email"
                password-parameter="password"
-               authentication-failure-url="/login.html?error=true" />
+               authentication-failure-handler-ref="authenticationFailureHandler"/>
+               <!--authentication-failure-url="/login.html?error=true" />-->
        <logout logout-success-url="/index.html" />
 
 
