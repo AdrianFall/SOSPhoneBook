@@ -7,8 +7,6 @@
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security.xsd">
 
-
-
    <http auto-config="true">
        <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
        <intercept-url pattern="/index" access="isAnonymous()"/>

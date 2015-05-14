@@ -1,6 +1,7 @@
 package core.repository;
 
 import core.entity.Account;
+import core.entity.VerificationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +10,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,10 +23,13 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration("classpath:spring/prod/spring-context.xml")
 @Transactional
 
-public class AccountRepoTest {
+public class VerificationTokenRepoTest {
 
     @Autowired
-    private AccountRepo repo;
+    private AccountRepo accountRepo;
+
+    @Autowired
+    private VerificationTokenRepo tokenRepo;
 
     // First account
     private Account firstAcc;
@@ -34,25 +40,22 @@ public class AccountRepoTest {
         firstAcc = new Account();
         firstAcc.setEmail("xa@xa");
         firstAcc.setPassword("superhard");
-        repo.createAccount(firstAcc);
+        accountRepo.createAccount(firstAcc);
+
     }
 
     @Test
-    public void findTheFirstAccountById() throws Exception {
-        assertNotNull(repo.findAccount(firstAcc.getId()));
+    public void createAndFindVerificationToken() throws Exception {
+        assertNotNull(firstAcc.getId());
+        String token = UUID.randomUUID().toString();
+        VerificationToken createdVerificaitonToken = tokenRepo.createVerificationToken(new VerificationToken(token, firstAcc));
+        assertNotNull(createdVerificaitonToken);
+
+        // Now find
+        VerificationToken verificationToken = tokenRepo.findVerificationToken(token);
+        assertNotNull(verificationToken);
+
     }
 
-    @Test
-    public void findAccountByEmail() throws Exception {
-        assertNotNull(repo.findAccountByEmail(firstAcc.getEmail()));
-    }
-
-    @Test
-    public void updateAccount() throws Exception {
-        // Modify the first acc
-        firstAcc.setEmail("re@re.re");
-        assertNotNull(repo.updateAccount(firstAcc));
-        assertEquals("re@re.re", firstAcc.getEmail());
-    }
 
 }

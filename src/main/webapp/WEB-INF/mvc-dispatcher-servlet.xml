@@ -21,9 +21,6 @@
     </bean>
 
 
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="message.prop.messageWeb"/>
-    </bean>
+
 
 </beans>

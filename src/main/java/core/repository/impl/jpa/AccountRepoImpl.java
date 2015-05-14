@@ -2,6 +2,7 @@ package core.repository.impl.jpa;
 
 import core.entity.Account;
 import core.entity.Role;
+import core.entity.VerificationToken;
 import core.repository.AccountRepo;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +52,8 @@ public class AccountRepoImpl implements AccountRepo {
 
     @Override
     public Account createAccount(Account acc) {
-        // Set account enabled by default
-        acc.setEnabled(true);
+        // Set account disabled by default
+        acc.setEnabled(false);
         emgr.persist(acc);
         emgr.flush();
 
@@ -67,5 +68,10 @@ public class AccountRepoImpl implements AccountRepo {
         acc.setRoles(roles);
 
         return acc;
+    }
+
+    @Override
+    public Account updateAccount(Account acc) {
+        return emgr.merge(acc);
     }
 }
