@@ -1,5 +1,6 @@
 package core.repository;
 
+import core.entity.Account;
 import core.entity.VerificationToken;
 
 /**
@@ -8,4 +9,5 @@ import core.entity.VerificationToken;
 public interface VerificationTokenRepo {
     public VerificationToken createVerificationToken(VerificationToken token);
     public VerificationToken findVerificationToken(String verificationToken);
+    public VerificationToken updateVerificationToken(VerificationToken token, Account acc);
 }

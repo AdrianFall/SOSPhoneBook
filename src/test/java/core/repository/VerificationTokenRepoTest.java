@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by Adrian on 10/05/2015.
@@ -45,7 +44,7 @@ public class VerificationTokenRepoTest {
     }
 
     @Test
-    public void createAndFindVerificationToken() throws Exception {
+    public void createAndFindAndUpdateVerificationToken() throws Exception {
         assertNotNull(firstAcc.getId());
         String token = UUID.randomUUID().toString();
         VerificationToken createdVerificaitonToken = tokenRepo.createVerificationToken(new VerificationToken(token, firstAcc));
@@ -54,6 +53,20 @@ public class VerificationTokenRepoTest {
         // Now find
         VerificationToken verificationToken = tokenRepo.findVerificationToken(token);
         assertNotNull(verificationToken);
+        assertNotNull(verificationToken.getAcc());
+
+        // And Create updateToken
+        String newToken = UUID.randomUUID().toString();
+        VerificationToken tokenToUpdate =  new VerificationToken(newToken, verificationToken.getAcc());
+        VerificationToken updatedToken = tokenRepo.updateVerificationToken(tokenToUpdate, firstAcc);
+        assertNotNull(updatedToken);
+        assertNotEquals(updatedToken.getToken(), token);
+        assertEquals(updatedToken.getAcc(), createdVerificaitonToken.getAcc());
+
+        // Ensure that it was updated
+        assertNull(tokenRepo.findVerificationToken(token));
+        assertNotNull(tokenRepo.findVerificationToken(newToken));
+
 
     }
 

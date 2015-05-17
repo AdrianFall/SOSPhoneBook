@@ -161,10 +161,4 @@ public class AccountControllerTest {
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attributeHasNoErrors(LOGIN_FORM_MODEL));*/
     }
-
-    @Test
-    public void testRegistrationConfirm() throws Exception {
-        VerificationToken token = new VerificationToken();
-    }
-
 }

@@ -10,8 +10,8 @@ import java.util.Calendar;
 @Entity(name = "verification_token")
 public class VerificationToken {
 
-    // 2 h
-    private static final int DEFAULT_EXPIRATION = 60 * 2;
+    // 24 h
+    private static final int DEFAULT_EXPIRATION = 60 * 24;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

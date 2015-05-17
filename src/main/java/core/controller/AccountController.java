@@ -90,15 +90,32 @@ public class AccountController {
                               @RequestParam(value = "logout", required = false) String logout) {
         ModelAndView model = new ModelAndView();
         if (error != null) {
-            bResult.rejectValue("email", "invalidCredentials");
-            model.addObject("error", "Invalid credentials.");
-        }
-
-        if (logout != null) {
-            model.addObject("msg", "Logged out.");
+            /* <prop key="org.springframework.security.authentication.BadCredentialsException">/login?error=badCredentials</prop>
+                        <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login?error=credentialsExpired</prop>
+                        <prop key="org.springframework.security.authentication.AccountExpiredException">/login?error=accountExpired</prop>
+                        <prop key="org.springframework.security.authentication.LockedException">/login?error=accountLocked</prop>
+                        <prop key="org.springframework.security.authentication.DisabledException">/login?error=accountDisabled</prop>*/
+            if (error.equals("badCredentials"))
+                bResult.rejectValue("email", "badCredentials");
+            else if (error.equals("credentialsExpired"))
+                bResult.rejectValue("password", "credentialsExpired");
+            else if (error.equals("accountExpired"))
+                bResult.rejectValue("email", "accountExpired");
+            else if (error.equals("accountLocked"))
+                bResult.rejectValue("email", "accountLocked");
+            else if (error.equals("accountDisabled")) {
+                bResult.rejectValue("email", "accountDisabled");
+            }
         }
 
         model.setViewName("login");
+
+        if (logout != null) {
+            model.addObject("msg", "Logging out out.");
+            model.setViewName("logout");
+        }
+
+
         return model;
     }
 

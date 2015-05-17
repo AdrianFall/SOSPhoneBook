@@ -87,11 +87,11 @@
 
                 <property name="exceptionMappings">
                     <props>
-                        <prop key="org.springframework.security.authentication.BadCredentialsException">/login/badCredentials</prop>
-                        <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login/credentialsExpired</prop>
-                        <prop key="org.springframework.security.authentication.AccountExpiredException">/login/accountExpired</prop>
-                        <prop key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
-                        <prop key="org.springframework.security.authentication.DisabledException">/login/accountDisabled</prop>
+                        <prop key="org.springframework.security.authentication.BadCredentialsException">/login?error=badCredentials</prop>
+                        <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login?error=credentialsExpired</prop>
+                        <prop key="org.springframework.security.authentication.AccountExpiredException">/login?error=accountExpired</prop>
+                        <prop key="org.springframework.security.authentication.LockedException">/login?error=accountLocked</prop>
+                        <prop key="org.springframework.security.authentication.DisabledException">/login?error=accountDisabled</prop>
                     </props>
 
                 </property>
