@@ -2,13 +2,10 @@ package core.service.impl;
 
 import core.entity.Account;
 import core.entity.VerificationToken;
-import core.event.OnRegistrationCompleteEvent;
 import core.repository.AccountRepo;
 import core.repository.VerificationTokenRepo;
 import core.service.AccountService;
 import core.service.exception.EmailExistsException;
-import core.service.exception.EmailNotSentException;
-import core.service.exception.UsernameExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
     private ApplicationEventPublisher eventPublisher;
 
     @Override
-    public Account createAccount(Account acc) throws UsernameExistsException, EmailExistsException {
+    public Account createAccount(Account acc) throws EmailExistsException {
         if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
             throw new EmailExistsException("Email already exists.");
         }

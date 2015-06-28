@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SOSPhoneBook.iml" filepath="$PROJECT_DIR$/SOSPhoneBook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RegAndLoginTemplate.iml" filepath="$PROJECT_DIR$/RegAndLoginTemplate.iml" />
     </modules>
   </component>
 </project>

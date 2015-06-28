@@ -1,37 +1,69 @@
-
 <beans:bean xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:sec="http://www.springframework.org/schema/security"
+            xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security.xsd">
 
-   <http auto-config="true">
+    <!-- Web authentication -->
+    <http use-expressions="true" entry-point-ref="webAuthenticationEntryPoint">
+
+        <intercept-url pattern="/admin" access="ROLE_ADMIN"/>
+        <intercept-url pattern="/main" access="hasRole('ROLE_USER')"/>
+
+        <sec:form-login authentication-success-handler-ref="formSuccessHandler"
+                        login-page="/WEB-INF/jsp/login.jsp"
+
+                        authentication-failure-handler-ref="authenticationFailureHandler"
+                        username-parameter="email"
+                        password-parameter="password"/>
+
+
+        <logout />
+    </http>
+
+
+   <!-- <http use-expressions="true" entry-point-ref="webAuthenticationEntryPoint">
+
+        <intercept-url pattern="/**" access="isAnonymous()"/> // By default needs user
+
+        <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
+        <intercept-url pattern="/index*" access="isAnonymous()"/>
+        <intercept-url pattern="/" access="isAnonymous()"/>
+        <intercept-url pattern="/register*" access="isAnonymous()"/>
+        <intercept-url pattern="/resources/**" access="isAnonymous()"/>
+
+        <intercept-url pattern="/admin" access="ADMIN"/>
+
+        <sec:form-login authentication-success-handler-ref="formSuccessHandler" authentication-failure-handler-ref="formFailutreHandler"/>
+
+        <logout />
+    </http>-->
+
+
+
+
+    <!-- Old - form based auth -->
+<!--   <http auto-config="true">
        <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
        <intercept-url pattern="/index" access="isAnonymous()"/>
        <intercept-url pattern="/account*" access="isAnonymous()"/>
-       <!--<intercept-url pattern="/**" access="isAuthenticated()"/>-->
+       <intercept-url pattern="/**" access="isAuthenticated()"/>
        <intercept-url pattern="/admin" access="ADMIN"/>
 
-       <!--Fully configured, the <form-login> element looks like this:
-        <form-login
-           login-page='/login.html'
-           login-processing-url="/perform_login"
-           default-target-url="/homepage.html"
-           authentication-failure-url="/login.html?error=true"
-           always-use-default-target="true"/>-->
+
        <form-login
                login-page="/login"
                default-target-url="/login.html?msg=success"
                username-parameter="email"
                password-parameter="password"
                authentication-failure-handler-ref="authenticationFailureHandler"/>
-               <!--authentication-failure-url="/login.html?error=true" />-->
        <logout logout-success-url="/index.html" />
 
 
-   </http>
+   </http>-->
 
 
     <authentication-manager alias="authenticationManager">
@@ -40,5 +72,7 @@
         </authentication-provider>
     </authentication-manager>
 
+    <!-- Turn on the security annotations for defining the roles -->
+    <global-method-security secured-annotations="enabled" />
 
 </beans:bean>

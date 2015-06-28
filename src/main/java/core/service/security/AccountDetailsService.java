@@ -35,7 +35,7 @@ public class AccountDetailsService implements org.springframework.security.core.
         }
 
         List<GrantedAuthority> authorities =
-                buildUserAuthority(acc.getRoles());
+                buildUserAuthority(acc.getAccRoles());
 
         return buildUserForAuthentication(acc, authorities);
        /* boolean enabled = true;

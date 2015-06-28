@@ -2,7 +2,6 @@ package core.repository.impl.jpa;
 
 import core.entity.Account;
 import core.entity.Role;
-import core.entity.VerificationToken;
 import core.repository.AccountRepo;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,18 +53,28 @@ public class AccountRepoImpl implements AccountRepo {
     public Account createAccount(Account acc) {
         // Set account disabled by default
         acc.setEnabled(false);
+
+        // Find the user role
+        Query query = emgr.createQuery("SELECT r FROM Role r WHERE r.role = :role");
+        query.setParameter("role", "ROLE_USER");
+
+        if (query.getResultList().isEmpty())
+            return null;
+
+        Role role = (Role) query.getResultList().get(0);
+
+        // Create new account roles obj
+        Set<Role> accRoles = new HashSet<Role>();
+        accRoles.add(role);
+        acc.setAccRoles(accRoles);
+
         emgr.persist(acc);
         emgr.flush();
 
-        // Add new user role
-        Role role = new Role("USER", acc);
-        emgr.persist(role);
-        emgr.flush();
-
         // Attach the role to the acc obj
-        Set<Role> roles = new HashSet<Role>(0);
+       /* Set<Role> roles = new HashSet<Role>(0);
         roles.add(role);
-        acc.setRoles(roles);
+        acc.setRoles(roles);*/
 
         return acc;
     }

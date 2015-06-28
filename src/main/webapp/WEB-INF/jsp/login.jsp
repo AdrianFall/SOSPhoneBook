@@ -1,148 +1,44 @@
-<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@page session="true"%>
-<html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<spring:url value="resources/css/login/loginForm.css" var="loginFormCss"/>
+<p>
 <head>
-  <title>Login Page</title>
-  <style>
-    .error {
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      color: #a94442;
-      background-color: #f2dede;
-      border-color: #ebccd1;
-    }
+  <title>Sample Form</title>
+  <link rel="stylesheet" href="${loginFormCss}"/>
 
-    .msg {
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      color: #31708f;
-      background-color: #d9edf7;
-      border-color: #bce8f1;
-    }
-
-    #login-box {
-      width: 300px;
-      padding: 20px;
-      margin: 100px auto;
-      background: #fff;
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
-      border: 1px solid #000;
-    }
-  </style>
 </head>
-<body onload='document.loginForm.username.focus();'>
+<body>
+  <%@include file="fragments/navigation.jspf" %>
+  <%-- Errors --%>
 
-<h1>Spring Security Login Form (Database Authentication)</h1>
-
-<div id="login-box">
-
-  <h2>Login with Username and Password</h2>
-
-  <c:if test="${not empty error}">
-    <div class="error">${error}</div>
-  </c:if>
-  <c:if test="${not empty msg}">
-    <div class="msg">${msg}</div>
+  <c:if  test="${not empty param.error}">
+    <div class="error">${param.error}</div>
   </c:if>
 
-  <c:url value="/login" var="loginUrl"/>
-  <form action="${loginUrl}" method="post">
-    <c:if test="${param.error != null}">
-      <p>
-        Invalid username and password.
-      </p>
-    </c:if>
-    <c:if test="${param.logout != null}">
-      <p>
-        You have been logged out.
-      </p>
-    </c:if>
-    <p>
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username"/>
-    </p>
-    <p>
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password"/>
-    </p>
-    <input type="hidden"
-           name="${_csrf.parameterName}"
-           value="${_csrf.token}"/>
-    <button type="submit" class="btn">Log in</button>
-  </form>
+  <c:if test="${not empty param.msg}">
+    <div class="msg">${param.msg}</div>
+  </c:if>
 
-  &lt;%&ndash;<form name='loginForm'
-        action="/login" method='POST'>
+  <form:form class="loginForm" action="/login" method="POST" modelAttribute="loginForm">
+    <label for="emailInput"><spring:message code="login.email"/>:</label>
+    <form:input path="email" id="emailInput" />
+    <br/>
+    <form:errors path="email" cssClass="error" />
+    <br/>
 
-    <table>
-      <tr>
-        <td>User:</td>
-        <td><input type='email' name='email' id='email'></td>
-      </tr>
-      <tr>
-        <td>Password:</td>
-        <td><input type='password' name='password' id='password'/></td>
-      </tr>
-      <tr>
-        <td colspan='2'><input name="submit" type="submit"
-                               value="submit" /></td>
-      </tr>
-    </table>
+
+    <label for="passwordInput"><spring:message code="login.password"/>:</label>
+    <form:input type="password" path="password" id="passwordInput" />
+    <br/>
+    <form:errors path="password" cssClass="error" />
+    <br/>
 
     <input type="hidden" name="${_csrf.parameterName}"
            value="${_csrf.token}" />
 
-  </form>&ndash;%&gt;
-</div>
-
-</body>
-</html>--%>
-
-
-
-
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Sample Form</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <style>
-      body { background-color: #eee; font: helvetica; }
-      #container { width: 500px; background-color: #fff; margin: 30px auto; padding: 30px; border-radius: 5px; }
-      .green { font-weight: bold; color: green; }
-      .message { margin-bottom: 10px; }
-      label {width:70px; display:inline-block;}
-      input { display:inline-block; margin-right: 10px; }
-      form {line-height: 160%; }
-      .hide { display: none; }
-      .error { color: red; font-size: 0.9em; font-weight: bold; }
-    </style>
-</head>
-<body>
-
-<form:form action="/login" method="POST" modelAttribute="loginForm">
-  <label for="emailInput">Email: </label>
-  <form:input path="email" id="emailInput" />
-  <form:errors path="email" cssClass="error" />
-  <br/>
-
-
-  <label for="passwordInput">Password: </label>
-  <form:input type="password" path="password" id="passwordInput" />
-  <form:errors path="password" cssClass="error" />
-  <br/>
-
-  <input type="hidden" name="${_csrf.parameterName}"
-         value="${_csrf.token}" />
-
-  <input type="submit" value="Submit" />
-</form:form>
+    <input class="submit" type="submit" value="<spring:message code="login.submit"/>" />
+  </form:form>
 </body>
 </html>

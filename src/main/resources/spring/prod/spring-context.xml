@@ -1,100 +1,118 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx.xsd
-        http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+   xmlns:mvc="http://www.springframework.org/schema/mvc"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:tx="http://www.springframework.org/schema/tx"
+   xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
 
-       <context:component-scan base-package="core.repository.impl.jpa"/>
-       
-       <context:component-scan base-package="core.service"/>
-    
-       <context:component-scan base-package="core.event"/>
+   <context:component-scan base-package="core.repository.impl.jpa"/>
+   
+   <context:component-scan base-package="core.service"/>
 
-        <mvc:annotation-driven/>
+   <context:component-scan base-package="core.event"/>
 
-       <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-              <property name="username" value="postgres"/>
-              <property name="password" value="003343adaja"/>
-              <property name="url" value="#{ 'jdbc:postgresql://' + 'localhost' + ':' + '5432' + '/sosphonebook' }"/>
-              <property name="driverClassName" value="org.postgresql.Driver"/>
-              <property name="validationQuery" value="SELECT 1"/>
-       </bean>
+    <mvc:annotation-driven />
 
-       <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-              <property name="dataSource" ref="dataSource"/>
-              <property name="jpaVendorAdapter">
-                     <!-- Use Hibernate as JPA impl -->
-                     <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-              </property>
+   <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+          <property name="username" value="postgres"/>
+          <property name="password" value="003343adaja"/>
+          <property name="url" value="#{ 'jdbc:postgresql://' + 'localhost' + ':' + '5432' + '/sosphonebook' }"/>
+          <property name="driverClassName" value="org.postgresql.Driver"/>
+          <property name="validationQuery" value="SELECT 1"/>
+   </bean>
 
-              <property name="jpaProperties">
-                     <map>
-                            <!-- Specifies the properties for JPA how to generate the db -->
-                           <!-- <entry key="hibernate.hbm2ddl.auto" value="create"/> --><!-- Created and Dropped along with SessionFactory Create and Close-->
-                            <!-- Show SQL -->
-                            <entry key="hibernate.show_sql" value="true"/>
-                     </map>
-              </property>
-              <!-- Specifies the directory where the entities are located -->
-              <property name="packagesToScan" value="core.entity"/>
-       </bean>
+   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+          <property name="dataSource" ref="dataSource"/>
+          <property name="jpaVendorAdapter">
+                 <!-- Use Hibernate as JPA impl -->
+                 <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+          </property>
 
-       <!-- Enables the configuration of transactional behavior based on annotations -->
-       <tx:annotation-driven/>  <!--looks for @Transactional on beans in the same application context they are defined in. This means that, if you put annotation driven configuration in a WebApplicationContext for a DispatcherServlet, it only checks for @Transactional beans in your controllers, and not your services. See Section 17.2, “The DispatcherServlet” for more information.-->
+          <property name="jpaProperties">
+                 <map>
+                        <!-- Specifies the properties for JPA how to generate the db -->
+                       <!-- <entry key="hibernate.hbm2ddl.auto" value="create"/> --><!-- Created and Dropped along with SessionFactory Create and Close-->
+                        <!-- Show SQL -->
+                        <entry key="hibernate.show_sql" value="true"/>
+                 </map>
+          </property>
+          <!-- Specifies the directory where the entities are located -->
+          <property name="packagesToScan" value="core.entity"/>
+   </bean>
 
-       <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
+   <!-- Enables the configuration of transactional behavior based on annotations -->
+   <tx:annotation-driven/>  <!--looks for @Transactional on beans in the same application context they are defined in. This means that, if you put annotation driven configuration in a WebApplicationContext for a DispatcherServlet, it only checks for @Transactional beans in your controllers, and not your services. See Section 17.2, “The DispatcherServlet” for more information.-->
 
-       <!-- Authentication -->
-        <bean id="accountDetailsService" class="core.service.security.AccountDetailsService"/>
-        <!-- Password encoding -->
-        <bean id="bcryptEncoder" name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 
-        <!-- Email - emailSender -->
-        <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-            <property name="host" value="smtp.gmail.com" />
-            <property name="port" value="25"/>
-            <property name="username" value="qiftei@gmail.com"/><!--https://www.google.com/settings/u/2/security/lesssecureapps-->
-            <property name="password" value="adrianq92"/>
-            <property name="javaMailProperties">
+   <!-- Authentication -->
+    <bean id="accountDetailsService" class="core.service.security.AccountDetailsService"/>
+    <!-- Password encoding -->
+    <bean id="bcryptEncoder" name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <!-- Email - emailSender -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="25"/>
+        <property name="username" value="qiftei@gmail.com"/><!--https://www.google.com/settings/u/2/security/lesssecureapps-->
+        <property name="password" value="adrianq92"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+
+<!--    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>messages.messages</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>-->
+    <bean id = "messageSource"
+          class= "org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:/messages/messages"/>
+        <property name="cacheSeconds" value="5"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+
+
+    <!-- AuthenticationFailureHandler  -->
+    <bean id="formFailutreHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"/>
+    <bean id="formSuccessHandler" class="web.authentication.form.FormSuccessHandler"/>
+
+    <bean id="webAuthenticationEntryPoint" class="web.authentication.WebAuthenticationEntryPoint"/>
+
+    <!-- OLD - authentication handler-->
+    <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+
+            <property name="exceptionMappings">
                 <props>
-                    <prop key="mail.transport.protocol">smtp</prop>
-                    <prop key="mail.smtp.auth">true</prop>
-                    <prop key="mail.smtp.starttls.enable">true</prop>
-                    <prop key="mail.debug">true</prop>
+                    <prop key="org.springframework.security.authentication.BadCredentialsException">/login?errorAuthentication=badCredentials</prop>
+                    <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login?errorAuthentication=credentialsExpired</prop>
+                    <prop key="org.springframework.security.authentication.AccountExpiredException">/login?errorAuthentication=accountExpired</prop>
+                    <prop key="org.springframework.security.authentication.LockedException">/login?errorAuthentication=accountLocked</prop>
+                    <prop key="org.springframework.security.authentication.DisabledException">/login?errorAuthentication=accountDisabled</prop> <!-- Disactivated -->
                 </props>
+
             </property>
-        </bean>
+    </bean>
 
-        <bean id="messageSource"
-              class="org.springframework.context.support.ResourceBundleMessageSource">
-            <property name="basename" value="messages.messages"/>
-            <property name="defaultEncoding" value="UTF-8"/>
-        </bean>
-
-        <!-- AuthenticationFailureHandler  -->
-        <!--<bean id="authenticationFailureHandler" class="resources.authentication.LoginAuthenticationFailureHandler"/>-->
-
-        <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-
-                <property name="exceptionMappings">
-                    <props>
-                        <prop key="org.springframework.security.authentication.BadCredentialsException">/login?error=badCredentials</prop>
-                        <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login?error=credentialsExpired</prop>
-                        <prop key="org.springframework.security.authentication.AccountExpiredException">/login?error=accountExpired</prop>
-                        <prop key="org.springframework.security.authentication.LockedException">/login?error=accountLocked</prop>
-                        <prop key="org.springframework.security.authentication.DisabledException">/login?error=accountDisabled</prop>
-                    </props>
-
-                </property>
-        </bean>
-
+    <mvc:resources mapping="/resources/**" location="/resources/theme-def/" cache-period="31556926"/>
+    
 </beans>

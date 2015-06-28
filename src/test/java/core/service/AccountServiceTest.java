@@ -2,7 +2,6 @@ package core.service;
 
 import core.entity.Account;
 import core.service.exception.EmailExistsException;
-import core.service.exception.UsernameExistsException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -8,13 +8,14 @@ import core.model.form.RegistrationForm;
 import core.service.AccountService;
 import core.service.EmailService;
 import core.service.exception.EmailExistsException;
-import core.service.exception.UsernameExistsException;
+import core.service.exception.EmailNotSentException;
+import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.Locale;
@@ -45,36 +48,43 @@ public class AccountController {
     public static final String MODEL_REG_FORM = "registrationForm";
 
     @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
-    public String registrationConfirm(@RequestParam("token") String token, WebRequest request, Model model){
+    public ModelAndView registrationConfirm(@RequestParam("token") String token, WebRequest request, Model model){
         Locale locale = request.getLocale();
-
+        ModelAndView mav = new ModelAndView();
         VerificationToken verificationToken = accountService.findVerificationToken(token);
         if (verificationToken == null) {
-            String message = messages.getMessage("auth.message.invalidToken", null, locale);
-            model.addAttribute("message", message);
-            return "redirect:/badUser?lang=" + locale.getLanguage();
+            String message = messages.getMessage("registration.invalidToken", null, locale);
+            mav.addObject("error", message);
+            mav.setViewName("redirect:/login");
+
+            return mav;
         }
 
         Account acc = verificationToken.getAcc();
         Calendar cal = Calendar.getInstance();
         Long timeDiff = verificationToken.getExpiryDate().getTime() - cal.getTime().getTime();
         if (timeDiff <= 0) {
-            model.addAttribute("message", messages.getMessage("auth.message.expired", null, locale));
-            return "redirect:/badUser?lang=" + locale.getLanguage();
+            mav.addObject("error", messages.getMessage("registration.tokenExpired", null, locale));
+            // TODO AUTOMATICALLY RESEND THE EMAIL VERIFICATION
+            mav.setViewName("redirect:/login");
+            return mav;
         }
 
         // Activate the acc
         acc.setEnabled(true);
         Account updatedAcc = accountService.updateAccount(acc);
         if (updatedAcc == null) {
-            model.addAttribute("message", messages.getMessage("auth.message.updateUser", null, locale));
-            return "redirect:/badUser?lang=" + locale.getLanguage();
-        }
 
-        return "redirect:/login?lang=" + request.getLocale().getLanguage();
+            mav.addObject("error", messages.getMessage("registration.couldNotBeActivated", null, locale));
+            mav.setViewName("redirect:/login");
+            return mav;
+        }
+        mav.addObject("msg", messages.getMessage("registration.activated", null, locale));
+        mav.setViewName("redirect:/login");
+        return mav;
     }
 
-    @RequestMapping(value = "/account", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String getRegistrationForm(Model m) {
         System.out.println("Getting form account.");
         RegistrationForm tempRegForm = new RegistrationForm();
@@ -86,26 +96,28 @@ public class AccountController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@Valid @ModelAttribute LoginForm loginForm,
                               BindingResult bResult,
-                              @RequestParam(value = "error", required = false) String error,
+                              HttpServletRequest request,
+                              HttpServletResponse response,
+                              @RequestParam(value = "errorAuthentication", required = false) String error,
                               @RequestParam(value = "logout", required = false) String logout) {
         ModelAndView model = new ModelAndView();
         if (error != null) {
-            /* <prop key="org.springframework.security.authentication.BadCredentialsException">/login?error=badCredentials</prop>
-                        <prop key="org.springframework.security.authentication.CredentialsExpiredException">/login?error=credentialsExpired</prop>
-                        <prop key="org.springframework.security.authentication.AccountExpiredException">/login?error=accountExpired</prop>
-                        <prop key="org.springframework.security.authentication.LockedException">/login?error=accountLocked</prop>
-                        <prop key="org.springframework.security.authentication.DisabledException">/login?error=accountDisabled</prop>*/
-            if (error.equals("badCredentials"))
-                bResult.rejectValue("email", "badCredentials");
-            else if (error.equals("credentialsExpired"))
-                bResult.rejectValue("password", "credentialsExpired");
-            else if (error.equals("accountExpired"))
-                bResult.rejectValue("email", "accountExpired");
-            else if (error.equals("accountLocked"))
-                bResult.rejectValue("email", "accountLocked");
-            else if (error.equals("accountDisabled")) {
-                bResult.rejectValue("email", "accountDisabled");
+
+            if (error.equals("badCredentials")) {
+                bResult.rejectValue("email", "login.badCredentials");
             }
+            else if (error.equals("credentialsExpired"))
+                bResult.rejectValue("password", "login.credentialsExpired");
+
+            else if (error.equals("accountExpired"))
+                bResult.rejectValue("email", "login.accountExpired");
+            else if (error.equals("accountLocked"))
+                bResult.rejectValue("email", "login.accountLocked");
+            else if (error.equals("accountDisabled")) {
+                bResult.rejectValue("email", "login.accountDisabled");
+            }
+
+            // And now cancel the parameter from the request URL
         }
 
         model.setViewName("login");
@@ -120,15 +132,14 @@ public class AccountController {
     }
 
 
-    @RequestMapping(value = "/account", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm,
-                                      BindingResult bResult, WebRequest request, Model m) {
-        System.out.println("createAccount POSTv2");
+                                      BindingResult bResult, HttpServletRequest request, Model m) {
 
         // Validate the form password & passConfirm match
         if (!regForm.getPassword().equals(regForm.getConfirmPassword())) {
-            bResult.rejectValue("password", "passwordMismatch");
-            bResult.rejectValue("confirmPassword", "passwordMismatch");
+            bResult.rejectValue("password", "registration.passwordMismatch");
+            bResult.rejectValue("confirmPassword", "registration.passwordMismatch");
             System.out.println("Password match validation - failed.");
         }
 
@@ -147,23 +158,34 @@ public class AccountController {
 
 
         try {// Attempt acc creation
-            accountService.createAccount(newAcc);
-            // Acc created
+            Account acc = accountService.createAccount(newAcc);
+            if (acc != null) {
+                ModelAndView mav = new ModelAndView();
+                // Acc created
+                String appUrl = request.getContextPath();
 
-            String appUrl = request.getContextPath();
-
-            emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
-
-
+                emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
+                // Forward to the login, acknowleding that account has been created
+                mav.addObject("msg", messages.getMessage("registration.created", null, request.getLocale()));
+                mav.setViewName("redirect:/login");
+                return mav;
+            } else { // Acc not created
+                bResult.rejectValue("email", "registration.accCreationError");
+                // Clean the passwords fields
+                regForm.setPassword("");
+                regForm.setConfirmPassword("");
+                return new ModelAndView("registrationForm");
+            }
         }  catch(EmailExistsException eee) {
             System.out.println("Catched EmailexistsException, attaching the rejected value to BindingREsult");
-            bResult.rejectValue("email", "emailExists");
-        } finally {
-            // TODO change to different view upon account creation
-
+            bResult.rejectValue("email", "registration.emailExists");
             // Clean the password fields before returning the form again
             regForm.setPassword("");
             regForm.setConfirmPassword("");
+            return new ModelAndView("registrationForm");
+        } catch (EmailNotSentException uee) {
+            System.out.println("Catched EmailNotSentException, attaching the rejected value to BindingResult");
+            bResult.rejectValue("email", "registration.emailCouldNotBeSent");
             return new ModelAndView("registrationForm");
         }
        /* Account createdAcc = accountService.createAccount(newAcc);

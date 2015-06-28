@@ -2,25 +2,29 @@ package core.entity;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "role",
         uniqueConstraints = @UniqueConstraint(
-                columnNames = { "role", "account_id" }))
+                columnNames = { "role"}))
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     private String role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+   /* @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
-    private Account account;
+    private Account account;*/
 
-    public Role(String role, Account acc) {
+  /*  @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Set<AccountsRoles> accRoles;*/
+
+    public Role(String role) {
         this.role = role;
-        account = acc;
     }
 
     public Role() {
@@ -45,13 +49,6 @@ public class Role {
     }
 
 
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 
 
 }

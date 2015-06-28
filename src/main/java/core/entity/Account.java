@@ -5,6 +5,7 @@ import com.sun.istack.internal.NotNull;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,9 +21,12 @@ public class Account {
     private String password;
     private String email;
     private boolean enabled;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
-    private Set<Role> roles = new HashSet<Role>(0);
 
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "accounts_roles",
+                joinColumns = {@JoinColumn(name = "account_id")},
+                inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private Set<Role> accRoles;
 
     public Account(String email, String password) {
         this.password = password;
@@ -57,12 +61,13 @@ public class Account {
         this.email = email;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+
+    public Set<Role> getAccRoles() {
+        return accRoles;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setAccRoles(Set<Role> accRoles) {
+        this.accRoles = accRoles;
     }
 
     public boolean isEnabled() {

@@ -18,10 +18,10 @@ public class RegistrationForm {
 
 
     @NotNull
-    @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$", message = "Please enter a valid email format.")
+    @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$")
     private String email;
 
-    @Size(min = 5, max = 120)
+    @Size(min = 5, max = 120, message = "{validation.message.Size.password}")
     @NotNull
     private String password;
 

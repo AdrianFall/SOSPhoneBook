@@ -1,4 +1,4 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <%--
   Created by IntelliJ IDEA.
   User: Adrian
@@ -6,45 +6,38 @@
   Time: 16:16
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<spring:url value="resources/css/registration/registrationForm.css" var="registrationFormCss"/>
 <html>
 <head>
-    <title>Sample Form</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <style>
-      body { background-color: #eee; font: helvetica; }
-      #container { width: 500px; background-color: #fff; margin: 30px auto; padding: 30px; border-radius: 5px; }
-      .green { font-weight: bold; color: green; }
-      .message { margin-bottom: 10px; }
-      label {width:70px; display:inline-block;}
-      input { display:inline-block; margin-right: 10px; }
-      form {line-height: 160%; }
-      .hide { display: none; }
-      .error { color: red; font-size: 0.9em; font-weight: bold; }
-    </style>
+  <title>Sample Form</title>
+
+  <link rel="stylesheet" href="${registrationFormCss}"/>
+
 </head>
 <body>
 
-<form:form action="/account" method="POST" modelAttribute="registrationForm">
-  <label for="emailInput">Email: </label>
-  <form:input type="email" path="email" id="emailInput" />
-  <form:errors path="email" cssClass="error" />
-  <br/>
+  <%-- Include navigation fragment --%>
+  <%@include file="fragments/navigation.jspf" %>
 
-  <label for="passwordInput">Password: </label>
-  <form:input type="password" path="password" id="passwordInput" />
-  <form:errors path="password" cssClass="error" />
-  <br/>
+  <form:form class="regForm" action="/register" method="POST" modelAttribute="registrationForm">
+    <label for="emailInput"><spring:message code="registration.email"/>:</label>
+    <form:input type="email" path="email" id="emailInput" />
+    <form:errors path="email" cssClass="error" />
+    <br/>
 
-  <label for="confirmPasswordInput">Confirm Password: </label>
-  <form:input type="password" path="confirmPassword" id="confirmPasswordInput" />
-  <form:errors path="confirmPassword" cssClass="error" />
-  <br/>
+    <label for="passwordInput"><spring:message code="registration.password"/>:</label>
+    <form:input type="password" path="password" id="passwordInput" />
+    <form:errors path="password" cssClass="error" />
+    <br/>
 
-<%--  <form:errors path="" cssClass="error"/>--%>
-
-
-  <input type="submit" value="Submit" />
+    <label for="confirmPasswordInput"><spring:message code="registration.confirmPassword"/>:</label>
+    <form:input type="password" path="confirmPassword" id="confirmPasswordInput" />
+    <form:errors path="confirmPassword" cssClass="error" />
+    <br/>
+  <input class="submit" type="submit" value="<spring:message code="registration.submit"/>" />
 </form:form>
 </body>
 </html>

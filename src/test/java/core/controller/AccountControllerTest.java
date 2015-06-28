@@ -2,7 +2,9 @@ package core.controller;
 
 import core.entity.Account;
 import core.entity.VerificationToken;
+import core.event.OnRegistrationCompleteEvent;
 import core.service.AccountService;
+import core.service.EmailService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,7 @@ public class AccountControllerTest {
 
     @Mock
     private AccountService accountService;
-
+    private EmailService emailService;
 
 
 
@@ -69,10 +71,18 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void testGetForm() throws Exception {
-        mockMvc.perform(get("/account.jsp"))
+    public void testGetAccountForm() throws Exception {
+        mockMvc.perform(get("/register.jsp"))
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(forwardedUrl("/WEB-INF/jsp/registrationForm.jsp"));
+    }
+
+    @Test
+    public void testGetLoginForm() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -123,42 +133,11 @@ public class AccountControllerTest {
     }
 
     private MockHttpServletRequestBuilder postForm(String password, String confirmPassword, String email) {
-        return post("/account.jsp")
+        return post("/register.jsp")
                 .param("email", email)
                 .param("password", password)
                 .param("confirmPassword", confirmPassword);
     }
 
-    @Test
-    public void testCreateAccount() throws Exception {
-        String username = "usernametestm";
-        String password = "passww";
-        String email = "email@pattern.pl";
-        Account createdAcc = new Account(email, password);
 
-        when(accountService.createAccount(any(Account.class))).thenReturn(createdAcc);
-
-        mockMvc.perform(post("/account.jsp")
-                .param("username", username)
-                .param("password", password)
-                .param("confirmPassword", password)
-                .param("email", email))
-                .andDo(print())
-                // Model errors
-                .andExpect(model().hasNoErrors())
-                .andExpect(model().attributeHasNoErrors(REGISTRATION_FORM_MODEL))
-                // Model attributes
-                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("email", is(email))))
-                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("password", isEmptyString()))) // do not expect the model to contain password property
-                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, hasProperty("confirmPassword", isEmptyString())))
-                .andExpect(model().attribute(REGISTRATION_FORM_MODEL, not(hasProperty("username", is(username)))));
-
-        // Login
-      /*  mockMvc.perform(post("/login")
-                .param("email", email)
-                .param("password", password))
-                .andDo(print())
-                .andExpect(model().hasNoErrors())
-                .andExpect(model().attributeHasNoErrors(LOGIN_FORM_MODEL));*/
-    }
 }
