@@ -10,12 +10,11 @@
     <!-- Web authentication -->
     <http use-expressions="true" entry-point-ref="webAuthenticationEntryPoint">
 
-        <intercept-url pattern="/admin" access="ROLE_ADMIN"/>
-        <intercept-url pattern="/main" access="hasRole('ROLE_USER')"/>
+        <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/main*" access="hasRole('ROLE_USER')"/>
 
         <sec:form-login authentication-success-handler-ref="formSuccessHandler"
                         login-page="/WEB-INF/jsp/login.jsp"
-
                         authentication-failure-handler-ref="authenticationFailureHandler"
                         username-parameter="email"
                         password-parameter="password"/>

@@ -67,6 +67,16 @@
         <location>/WEB-INF/jsp/error/404.jsp</location>
     </error-page>
 
+    <error-page>
+        <error-code>401</error-code>
+        <location>/WEB-INF/jsp/error/401.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/jsp/error/403.jsp</location>
+    </error-page>
+
     <error-page> <!-- General errors -->
         <location>/WEB-INF/jsp/error/custom_error.jsp</location>
     </error-page>
