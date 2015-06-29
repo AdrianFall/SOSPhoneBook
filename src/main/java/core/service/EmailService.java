@@ -2,6 +2,7 @@ package core.service;
 
 import core.event.OnRegistrationCompleteEvent;
 import core.event.OnResendEmailEvent;
+import core.event.OnResetPasswordEvent;
 import core.service.exception.EmailNotSentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,14 +20,18 @@ public class EmailService implements ApplicationEventPublisherAware {
 
 
     public void sendConfirmationEmail(OnRegistrationCompleteEvent onRegistrationCompleteEvent) throws EmailNotSentException {
-
         eventPublisher.publishEvent(onRegistrationCompleteEvent);
-        System.out.println("Published event.");
+        System.out.println("Published OnRegistrationCompleteEvent");
     }
 
     public void resendConfirmationEmail(OnResendEmailEvent onResendEmailEvent) {
         eventPublisher.publishEvent(onResendEmailEvent);
-        System.out.println("Published event.");
+        System.out.println("Published OnResendEmailEvent");
+    }
+
+    public void sendResetPasswordEmail(OnResetPasswordEvent onResetPasswordEvent) {
+        eventPublisher.publishEvent(onResetPasswordEvent);
+        System.out.println("Published onResetPasswordEvent");
     }
 
     @Override

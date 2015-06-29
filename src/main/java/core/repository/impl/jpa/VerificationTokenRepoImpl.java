@@ -22,10 +22,8 @@ public class VerificationTokenRepoImpl implements VerificationTokenRepo {
 
     @Override
     public VerificationToken createVerificationToken(VerificationToken token) {
-
         emgr.persist(token);
         emgr.flush();
-
         return token;
     }
 

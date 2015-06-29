@@ -1,12 +1,12 @@
 package core.controller;
 
 import core.entity.Account;
+import core.entity.PasswordResetToken;
 import core.entity.VerificationToken;
 import core.event.OnRegistrationCompleteEvent;
 import core.event.OnResendEmailEvent;
-import core.model.form.LoginForm;
-import core.model.form.RegistrationForm;
-import core.model.form.ResendEmailForm;
+import core.event.OnResetPasswordEvent;
+import core.model.form.*;
 import core.service.AccountService;
 import core.service.EmailService;
 import core.service.exception.EmailExistsException;
@@ -14,6 +14,12 @@ import core.service.exception.EmailNotSentException;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,12 +52,47 @@ public class AccountController {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
 
     public static final String MODEL_REG_FORM = "registrationForm";
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/resetPasswordConfirm", method = RequestMethod.GET)
+    public ModelAndView getResetPasswordConfirm(@RequestParam("token") String token, HttpServletRequest request,
+                                                @Valid @ModelAttribute ResetPasswordConfirmForm resetPasswordConfirmForm,
+                                                BindingResult bResult) {
+        ModelAndView mav = new ModelAndView();
+
+        PasswordResetToken resetToken = accountService.findPasswordResetToken(token);
+
+        if (resetToken == null) {
+            mav.addObject("error", messages.getMessage("reset.password.token.invalid", null, request.getLocale()));
+            mav.setViewName("redirect:/login");
+
+        } else {
+            Account acc = resetToken.getAcc();
+            Calendar cal = Calendar.getInstance();
+            Long timeDiff = resetToken.getExpiryDate().getTime() - cal.getTime().getTime();
+            if (timeDiff <= 0) {
+                mav.addObject("error", messages.getMessage("reset.password.token.expired", null, request.getLocale()));
+                mav.setViewName("redirect:/login");
+            }
+
+            // Proceed with reseting the password
+            Authentication auth = new UsernamePasswordAuthenticationToken(acc, null, userDetailsService.loadUserByUsername(acc.getEmail()).getAuthorities());
+            System.out.println("Authorities of " + acc.getEmail() + " are : " + auth.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            mav.setViewName("redirect:/resetPasswordConfirm");
+        }
+
+        return mav;
+    }
+
 
     @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
-    public ModelAndView registrationConfirm(@RequestParam("token") String token, WebRequest request, Model model){
+    public ModelAndView registrationConfirm(@RequestParam("token") String token, HttpServletRequest request, Model model){
         Locale locale = request.getLocale();
         ModelAndView mav = new ModelAndView();
         VerificationToken verificationToken = accountService.findVerificationToken(token);
@@ -68,7 +109,6 @@ public class AccountController {
         Long timeDiff = verificationToken.getExpiryDate().getTime() - cal.getTime().getTime();
         if (timeDiff <= 0) {
             mav.addObject("error", messages.getMessage("registration.tokenExpired", null, locale));
-            // TODO AUTOMATICALLY RESEND THE EMAIL VERIFICATION
             mav.setViewName("redirect:/login");
             return mav;
         }
@@ -101,6 +141,9 @@ public class AccountController {
     public String resendEmail(@Valid @ModelAttribute ResendEmailForm resentEmailForm) {
         return "resendEmail";
     }
+
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
+    public String resetPassword(@Valid @ModelAttribute ResetPasswordForm resetPasswordForm) { return "resetPassword"; }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@Valid @ModelAttribute LoginForm loginForm,
@@ -141,15 +184,37 @@ public class AccountController {
         return model;
     }
 
+
+
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    public ModelAndView postResetPassword(@Valid @ModelAttribute ResetPasswordForm resetPasswordForm,
+                                          BindingResult bResult, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+        System.out.println("Reseting password P00OST");
+
+        // Check if the account exists
+        Account acc = accountService.findAccount(resetPasswordForm.getEmail());
+        if (acc == null)
+            bResult.rejectValue("email", "reset.password.doesNotExist");
+        else {
+            String appUrl = request.getRequestURL().toString().split("/resetPassword")[0];
+
+            emailService.sendResetPasswordEmail(new OnResetPasswordEvent(acc, request.getLocale(), appUrl));
+            mav.addObject("msg", messages.getMessage("reset.password.success", null, request.getLocale()));
+            mav.setViewName("redirect:/login");
+        }
+
+        return mav;
+    }
+
     @RequestMapping(value = "/resendEmail", method = RequestMethod.POST)
     public ModelAndView postResendEmail(@Valid @ModelAttribute ResendEmailForm resendEmailForm,
                                         BindingResult bResult, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
-        System.out.println("Resending email POST");
         Account acc = accountService.findAccount(resendEmailForm.getEmail());
-        if (acc == null) {
+        if (acc == null)
             bResult.rejectValue("email", "resend.email.doesNotExist");
-        } else {
+        else {
             if (acc.isEnabled())
                 bResult.rejectValue("email", "resend.email.alreadyActivated");
             else {
@@ -163,6 +228,7 @@ public class AccountController {
         }
         return mav;
     }
+
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm,

@@ -12,11 +12,11 @@
 <spring:url value="resources/css/login/resendEmailForm.css" var="resendEmailFormCss"/>
 <html>
 <head>
-    <title>Resend Email</title>
+    <title><spring:message code="resend.email.title"/></title>
 </head>
 <body>
   <%@include file="fragments/navigation.jspf" %>
-  <h1>Resend Email</h1>
+  <h1><spring:message code="resend.email.title"/></h1>
 
   <c:if  test="${not empty param.error}">
     <div class="error">${param.error}</div>

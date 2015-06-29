@@ -1,6 +1,7 @@
 package core.service;
 
 import core.entity.Account;
+import core.entity.PasswordResetToken;
 import core.entity.VerificationToken;
 import core.service.exception.EmailExistsException;
 
@@ -14,4 +15,6 @@ public interface AccountService {
     public VerificationToken findVerificationToken(String token);
     public Account findAccount(String email);
     public VerificationToken updateVerificationToken(VerificationToken newToken, Account acc);
+    public PasswordResetToken createPasswordResetToken(Account acc, String token);
+    public PasswordResetToken findPasswordResetToken(String token);
 }

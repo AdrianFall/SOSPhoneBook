@@ -29,7 +29,7 @@
     <form:errors path="email" cssClass="error" />
     <c:if test="${not empty requestScope.requestResendEmail}">
       <br/>
-      <a href="resendEmail" class="resendEmail"><spring:message code="resend.email.link"/></a>
+      <a href="resendEmail" class="resendEmail"><spring:message code="resend.email.link.resendemail"/></a>
     </c:if>
     <br/>
 
@@ -38,6 +38,9 @@
     <form:input type="password" path="password" id="passwordInput" />
     <br/>
     <form:errors path="password" cssClass="error" />
+
+    <a href="resetPassword" class="resetPassword"><spring:message code="resend.email.link.resetpassword"/></a>
+
     <br/>
 
     <input type="hidden" name="${_csrf.parameterName}"

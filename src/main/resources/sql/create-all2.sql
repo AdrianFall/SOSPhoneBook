@@ -1,7 +1,9 @@
+DROP TABLE IF EXISTS password_reset_token;
 DROP TABLE IF EXISTS verification_token;
 DROP TABLE IF EXISTS accounts_roles;
 DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS account;
+
 
 CREATE TABLE account
 (
@@ -46,4 +48,14 @@ CREATE TABLE verification_token
   account_id bigint NOT NULL,
   CONSTRAINT verification_token_pkey PRIMARY KEY (id),
   CONSTRAINT verification_token_fkey FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
+CREATE TABLE password_reset_token
+(
+  id serial NOT NULL,
+  token character varying(255) NOT NULL,
+  account_id bigint NOT NULL,
+  expiry_date timestamp without time zone NOT NULL,
+  CONSTRAINT password_reset_token_pkey PRIMARY KEY (id),
+  CONSTRAINT password_reset_token_fkey FOREIGN KEY (account_id) REFERENCES account(id)
 );

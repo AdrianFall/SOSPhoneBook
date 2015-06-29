@@ -1,8 +1,10 @@
 package core.service.impl;
 
 import core.entity.Account;
+import core.entity.PasswordResetToken;
 import core.entity.VerificationToken;
 import core.repository.AccountRepo;
+import core.repository.PasswordResetTokenRepo;
 import core.repository.VerificationTokenRepo;
 import core.service.AccountService;
 import core.service.exception.EmailExistsException;
@@ -27,6 +29,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private VerificationTokenRepo tokenRepo;
+
+    @Autowired
+    private PasswordResetTokenRepo passwordResetRepo;
 
 
     @Autowired
@@ -67,6 +72,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public VerificationToken updateVerificationToken(VerificationToken newToken, Account acc) {
         return tokenRepo.updateVerificationToken(newToken, acc);
+    }
+
+    @Override
+    public PasswordResetToken createPasswordResetToken(Account acc, String token) {
+        return passwordResetRepo.createPasswordResetToken(new PasswordResetToken(token,acc));
+    }
+
+    @Override
+    public PasswordResetToken findPasswordResetToken(String token) {
+        return passwordResetRepo.findPasswordResetToken(token);
     }
 
 }

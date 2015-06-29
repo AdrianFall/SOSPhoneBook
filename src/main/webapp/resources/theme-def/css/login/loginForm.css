@@ -10,4 +10,5 @@ form {line-height: 160%; }
 .submit {margin-left: 100px; margin-right:auto; margin-top: 5px; width: auto;}
 .error { font-size: 0.9em; font-weight: bold; color: #ac2925; width: 300px; margin-left: auto; margin-right: auto; text-align: center;}
 .msg {font-size: 0.9em; font-weight: bold; color: #398439; width: 300px; margin-left: auto; margin-right: auto; text-align: center;}
-.resendEmail {font-size: 0.6em; width: 150px; margin-left: auto; margin-right: auto; text-align: center;}
+.resendEmail {font-size: 0.75em; width: 150px; margin-left: auto; margin-right: auto; text-align: center;}
+.resetPassword {font-size: 0.75em; width: 150px; margin-left: 75px;}
