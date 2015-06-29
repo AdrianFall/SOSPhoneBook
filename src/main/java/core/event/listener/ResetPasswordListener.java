@@ -41,10 +41,10 @@ public class ResetPasswordListener implements ApplicationListener<OnResetPasswor
         PasswordResetToken createdPasswordResetToken = accountService.createPasswordResetToken(acc, token);
 
         String recipentEmail = acc.getEmail();
-        String subject = messageSource.getMessage("reset.password.email.subject", null, event.getLocale());
-        String confirmationURL = event.getAppUrl() + "/resetPasswordConfirm?token=" + token;
+        String subject = messageSource.getMessage("request.reset.password.email.subject", null, event.getLocale());
+        String confirmationURL = event.getAppUrl() + "/resetPassword?token=" + token;
 
-        String msg = messageSource.getMessage("reset.password.email.message", null, event.getLocale());
+        String msg = messageSource.getMessage("request.reset.password.email.message", null, event.getLocale());
         System.out.println("The email message is: " + msg);
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();

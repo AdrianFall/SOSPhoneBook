@@ -11,11 +11,8 @@ import core.service.AccountService;
 import core.service.EmailService;
 import core.service.exception.EmailExistsException;
 import core.service.exception.EmailNotSentException;
-import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,12 +20,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -57,39 +52,6 @@ public class AccountController {
 
 
     public static final String MODEL_REG_FORM = "registrationForm";
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = "/resetPasswordConfirm", method = RequestMethod.GET)
-    public ModelAndView getResetPasswordConfirm(@RequestParam("token") String token, HttpServletRequest request,
-                                                @Valid @ModelAttribute ResetPasswordConfirmForm resetPasswordConfirmForm,
-                                                BindingResult bResult) {
-        ModelAndView mav = new ModelAndView();
-
-        PasswordResetToken resetToken = accountService.findPasswordResetToken(token);
-
-        if (resetToken == null) {
-            mav.addObject("error", messages.getMessage("reset.password.token.invalid", null, request.getLocale()));
-            mav.setViewName("redirect:/login");
-
-        } else {
-            Account acc = resetToken.getAcc();
-            Calendar cal = Calendar.getInstance();
-            Long timeDiff = resetToken.getExpiryDate().getTime() - cal.getTime().getTime();
-            if (timeDiff <= 0) {
-                mav.addObject("error", messages.getMessage("reset.password.token.expired", null, request.getLocale()));
-                mav.setViewName("redirect:/login");
-            }
-
-            // Proceed with reseting the password
-            Authentication auth = new UsernamePasswordAuthenticationToken(acc, null, userDetailsService.loadUserByUsername(acc.getEmail()).getAuthorities());
-            System.out.println("Authorities of " + acc.getEmail() + " are : " + auth.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            mav.setViewName("redirect:/resetPasswordConfirm");
-        }
-
-        return mav;
-    }
-
 
     @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
     public ModelAndView registrationConfirm(@RequestParam("token") String token, HttpServletRequest request, Model model){
@@ -143,7 +105,36 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
-    public String resetPassword(@Valid @ModelAttribute ResetPasswordForm resetPasswordForm) { return "resetPassword"; }
+    public ModelAndView getResetPassword(@RequestParam("token") String token, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+
+        PasswordResetToken resetToken = accountService.findPasswordResetToken(token);
+
+        if (resetToken == null) {
+            mav.addObject("error", messages.getMessage("reset.password.token.invalid", null, request.getLocale()));
+            mav.setViewName("redirect:/login");
+
+        } else {
+            Account acc = resetToken.getAcc();
+            Calendar cal = Calendar.getInstance();
+            Long timeDiff = resetToken.getExpiryDate().getTime() - cal.getTime().getTime();
+            if (timeDiff <= 0) {
+                mav.addObject("error", messages.getMessage("reset.password.token.expired", null, request.getLocale()));
+                mav.setViewName("redirect:/login");
+            }
+
+            // Proceed with reseting the password
+            Authentication auth = new UsernamePasswordAuthenticationToken(acc, null, userDetailsService.loadUserByUsername(acc.getEmail()).getAuthorities());
+            System.out.println("Authorities of " + acc.getEmail() + " are : " + auth.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            mav.setViewName("resetPassword");
+        }
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/requestResetPassword", method = RequestMethod.GET)
+    public String resetPassword(@Valid @ModelAttribute RequestResetPasswordForm requestResetPasswordForm) { return "requestResetPassword"; }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@Valid @ModelAttribute LoginForm loginForm,
@@ -185,22 +176,29 @@ public class AccountController {
     }
 
 
-
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     public ModelAndView postResetPassword(@Valid @ModelAttribute ResetPasswordForm resetPasswordForm,
+                                          BindingResult bResult, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/requestResetPassword", method = RequestMethod.POST)
+    public ModelAndView postRequestResetPassword(@Valid @ModelAttribute RequestResetPasswordForm requestResetPasswordForm,
                                           BindingResult bResult, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
         System.out.println("Reseting password P00OST");
 
         // Check if the account exists
-        Account acc = accountService.findAccount(resetPasswordForm.getEmail());
+        Account acc = accountService.findAccount(requestResetPasswordForm.getEmail());
         if (acc == null)
-            bResult.rejectValue("email", "reset.password.doesNotExist");
+            bResult.rejectValue("email", "request.reset.password.doesNotExist");
         else {
-            String appUrl = request.getRequestURL().toString().split("/resetPassword")[0];
+            String appUrl = request.getRequestURL().toString().split("/requestResetPassword")[0];
 
             emailService.sendResetPasswordEmail(new OnResetPasswordEvent(acc, request.getLocale(), appUrl));
-            mav.addObject("msg", messages.getMessage("reset.password.success", null, request.getLocale()));
+            mav.addObject("msg", messages.getMessage("request.reset.password.success", null, request.getLocale()));
             mav.setViewName("redirect:/login");
         }
 

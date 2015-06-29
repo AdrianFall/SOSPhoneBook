@@ -39,7 +39,7 @@
     <br/>
     <form:errors path="password" cssClass="error" />
 
-    <a href="resetPassword" class="resetPassword"><spring:message code="resend.email.link.resetpassword"/></a>
+    <a href="requestResetPassword" class="requestResetPassword"><spring:message code="login.link.resetpassword"/></a>
 
     <br/>
 

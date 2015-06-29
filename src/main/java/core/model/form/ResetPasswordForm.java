@@ -1,19 +1,33 @@
 package core.model.form;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Created by Adrian on 29/06/2015.
  */
 public class ResetPasswordForm {
-    @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$", message = "Please enter a valid email format.")
-    private String email;
+    @Size(min = 5, max = 120, message = "{validation.message.Size.password}")
+    @NotNull
+    private String password;
 
-    public String getEmail() {
-        return email;
+    @Size(min = 5, max = 120)
+    @NotNull
+    private String confirmPassword;
+
+    public String getPassword() {
+        return password;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

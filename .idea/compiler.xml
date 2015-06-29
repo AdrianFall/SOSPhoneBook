@@ -24,8 +24,16 @@
         <processorPath useClasspath="true" />
         <module name="SOSPhoneBook" />
       </profile>
+      <profile default="false" name="Annotation profile for RegAndLoginTemplate" enabled="true">
+        <sourceOutputDir name="target\generated-sources\annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="RegAndLoginTemplate" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="RegAndLoginTemplate" target="1.7" />
       <module name="SOSPhoneBook" target="1.7" />
     </bytecodeTargetLevel>
   </component>
