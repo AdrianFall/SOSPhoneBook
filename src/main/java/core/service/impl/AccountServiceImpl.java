@@ -38,6 +38,11 @@ public class AccountServiceImpl implements AccountService {
     private ApplicationEventPublisher eventPublisher;
 
     @Override
+    public String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    @Override
     public Account createAccount(Account acc) throws EmailExistsException {
         if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
             throw new EmailExistsException("Email already exists.");

@@ -105,7 +105,8 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
-    public ModelAndView getResetPassword(@RequestParam("token") String token, HttpServletRequest request) {
+    public ModelAndView getResetPassword(@RequestParam("token") String token, HttpServletRequest request,
+                                   @ModelAttribute ResetPasswordForm resetPasswordForm) {
         ModelAndView mav = new ModelAndView();
 
         PasswordResetToken resetToken = accountService.findPasswordResetToken(token);
@@ -175,15 +176,6 @@ public class AccountController {
         return model;
     }
 
-
-    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-    public ModelAndView postResetPassword(@Valid @ModelAttribute ResetPasswordForm resetPasswordForm,
-                                          BindingResult bResult, HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView();
-
-        return mav;
-    }
-
     @RequestMapping(value = "/requestResetPassword", method = RequestMethod.POST)
     public ModelAndView postRequestResetPassword(@Valid @ModelAttribute RequestResetPasswordForm requestResetPasswordForm,
                                           BindingResult bResult, HttpServletRequest request) {
@@ -227,6 +219,46 @@ public class AccountController {
         return mav;
     }
 
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    public ModelAndView postResetPassword(@Valid @ModelAttribute ResetPasswordForm resetPasswordForm,
+                                          BindingResult bResult, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+
+        // Validate the form password & passConfirm match
+        if (!resetPasswordForm.getPassword().equals(resetPasswordForm.getConfirmPassword())) {
+            bResult.rejectValue("password", "registration.passwordMismatch");
+            bResult.rejectValue("confirmPassword", "registration.passwordMismatch");
+            //System.out.println("Password match validation - failed.");
+        }
+
+        if (bResult.hasErrors()) {
+            // Clean the password fields before returning the form again
+            resetPasswordForm.setPassword("");
+            resetPasswordForm.setConfirmPassword("");
+
+            mav.setViewName("resetPassword");
+            return mav;
+        }
+
+        // proceed with reseting pass
+        System.out.println("Valid reset password");
+        Account acc = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("Authenticated user email : " + acc.getEmail());
+        // encode pass
+        acc.setPassword(accountService.encodePassword(resetPasswordForm.getPassword()));
+        if (accountService.updateAccount(acc) != null) {
+            mav.addObject("msg", messages.getMessage("reset.password.success", null, request.getLocale()));
+            mav.setViewName("redirect:/login");
+        } else {
+            // Clean the password fields before returning the form again
+            resetPasswordForm.setPassword("");
+            resetPasswordForm.setConfirmPassword("");
+            bResult.rejectValue("password", "reset.password.error");
+            mav.setViewName("resetPassword");
+        }
+
+        return mav;
+    }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm,

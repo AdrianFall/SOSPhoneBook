@@ -19,7 +19,7 @@
 <%@include file="fragments/navigation.jspf" %>
 <h1><spring:message code="reset.password.title"/></h1>
 <sec:authorize access="hasRole('ROLE_USER')">
-  <form:form class="regForm" action="/TODO" method="POST" modelAttribute="resetPasswordForm">
+  <form:form class="regForm" action="/resetPassword" method="POST" modelAttribute="resetPasswordForm">
 
     <label for="passwordInput"><spring:message code="reset.password.newpassword"/>:</label>
     <form:input type="password" path="password" id="passwordInput" />

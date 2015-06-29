@@ -17,4 +17,5 @@ public interface AccountService {
     public VerificationToken updateVerificationToken(VerificationToken newToken, Account acc);
     public PasswordResetToken createPasswordResetToken(Account acc, String token);
     public PasswordResetToken findPasswordResetToken(String token);
+    public String encodePassword(String password);
 }
