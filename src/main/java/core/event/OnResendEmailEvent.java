@@ -6,15 +6,14 @@ import org.springframework.context.ApplicationEvent;
 import java.util.Locale;
 
 /**
- * Created by Adrian on 14/05/2015.
+ * Created by Adrian on 28/06/2015.
  */
-public class OnRegistrationCompleteEvent extends ApplicationEvent {
-
+public class OnResendEmailEvent extends ApplicationEvent {
     private final String appUrl;
     private final Locale locale;
     private final Account account;
 
-    public OnRegistrationCompleteEvent(Account account, Locale locale, String appUrl) {
+    public OnResendEmailEvent(Account account, Locale locale, String appUrl) {
         super(account);
         this.account = account;
         this.locale = locale;
@@ -34,5 +33,4 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent {
     public String getAppUrl() {
         return appUrl;
     }
-
 }

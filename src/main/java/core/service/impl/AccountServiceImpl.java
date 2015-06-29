@@ -59,4 +59,14 @@ public class AccountServiceImpl implements AccountService {
         return tokenRepo.findVerificationToken(token);
     }
 
+    @Override
+    public Account findAccount(String email) {
+        return accountRepo.findAccountByEmail(email);
+    }
+
+    @Override
+    public VerificationToken updateVerificationToken(VerificationToken newToken, Account acc) {
+        return tokenRepo.updateVerificationToken(newToken, acc);
+    }
+
 }

@@ -6,6 +6,6 @@ label {width:70px; display:inline-block;}
 input { display:inline-block; margin-right: 10px; }
 form {line-height: 160%; }
 .hide { display: none; }
-.regForm { margin-left: auto; margin-right: auto; width: 400px;}
+.regForm { margin-left: auto; margin-right: auto; width: 450px;}
 .submit { margin-left: 100px; margin-right: auto; margin-top: 5px;}
 .error { color: red; font-size: 0.9em; font-weight: bold; }

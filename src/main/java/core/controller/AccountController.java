@@ -3,8 +3,10 @@ package core.controller;
 import core.entity.Account;
 import core.entity.VerificationToken;
 import core.event.OnRegistrationCompleteEvent;
+import core.event.OnResendEmailEvent;
 import core.model.form.LoginForm;
 import core.model.form.RegistrationForm;
+import core.model.form.ResendEmailForm;
 import core.service.AccountService;
 import core.service.EmailService;
 import core.service.exception.EmailExistsException;
@@ -46,6 +48,7 @@ public class AccountController {
 
 
     public static final String MODEL_REG_FORM = "registrationForm";
+
 
     @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
     public ModelAndView registrationConfirm(@RequestParam("token") String token, WebRequest request, Model model){
@@ -89,8 +92,14 @@ public class AccountController {
         System.out.println("Getting form account.");
         RegistrationForm tempRegForm = new RegistrationForm();
         tempRegForm.setEmail("def@au.lt");
-        m.addAttribute("registrationForm",tempRegForm);
+        m.addAttribute("registrationForm", tempRegForm);
         return "registrationForm";
+    }
+
+
+    @RequestMapping(value = "/resendEmail", method = RequestMethod.GET)
+    public String resendEmail(@Valid @ModelAttribute ResendEmailForm resentEmailForm) {
+        return "resendEmail";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -115,6 +124,7 @@ public class AccountController {
                 bResult.rejectValue("email", "login.accountLocked");
             else if (error.equals("accountDisabled")) {
                 bResult.rejectValue("email", "login.accountDisabled");
+                request.setAttribute("requestResendEmail", "true");
             }
 
             // And now cancel the parameter from the request URL
@@ -131,6 +141,28 @@ public class AccountController {
         return model;
     }
 
+    @RequestMapping(value = "/resendEmail", method = RequestMethod.POST)
+    public ModelAndView postResendEmail(@Valid @ModelAttribute ResendEmailForm resendEmailForm,
+                                        BindingResult bResult, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+        System.out.println("Resending email POST");
+        Account acc = accountService.findAccount(resendEmailForm.getEmail());
+        if (acc == null) {
+            bResult.rejectValue("email", "resend.email.doesNotExist");
+        } else {
+            if (acc.isEnabled())
+                bResult.rejectValue("email", "resend.email.alreadyActivated");
+            else {
+                // Attempt to resend the activation email
+                String appUrl = request.getRequestURL().toString().split("/resendEmail")[0];
+
+                emailService.resendConfirmationEmail(new OnResendEmailEvent(acc, request.getLocale(), appUrl));
+                mav.addObject("msg", messages.getMessage("resend.email.success", null, request.getLocale()));
+                mav.setViewName("redirect:/login");
+            }
+        }
+        return mav;
+    }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm,
@@ -162,7 +194,8 @@ public class AccountController {
             if (acc != null) {
                 ModelAndView mav = new ModelAndView();
                 // Acc created
-                String appUrl = request.getContextPath();
+                String appUrl = request.getRequestURL().toString().split("/register")[0];
+                System.out.println("APP URL = " + appUrl);
 
                 emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
                 // Forward to the login, acknowleding that account has been created
@@ -188,16 +221,5 @@ public class AccountController {
             bResult.rejectValue("email", "registration.emailCouldNotBeSent");
             return new ModelAndView("registrationForm");
         }
-       /* Account createdAcc = accountService.createAccount(newAcc);
-        if (createdAcc == null) {
-            bResult.rejectValue("username", "usernameExists");
-            System.out.println("Account not created.");
-        } else {
-            System.out.println("Registered account. with id: " + createdAcc.getId());
-        }
-        // Clean the passwords from the regForm
-        regForm.setPassword(null);
-        //m.addAttribute("message", "Registered account for: " + regForm.toString());*/
-
     }
 }

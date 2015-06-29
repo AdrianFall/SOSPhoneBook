@@ -3,7 +3,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <spring:url value="resources/css/login/loginForm.css" var="loginFormCss"/>
-<p>
 <head>
   <title>Sample Form</title>
   <link rel="stylesheet" href="${loginFormCss}"/>
@@ -17,6 +16,8 @@
     <div class="error">${param.error}</div>
   </c:if>
 
+
+
   <c:if test="${not empty param.msg}">
     <div class="msg">${param.msg}</div>
   </c:if>
@@ -26,6 +27,10 @@
     <form:input path="email" id="emailInput" />
     <br/>
     <form:errors path="email" cssClass="error" />
+    <c:if test="${not empty requestScope.requestResendEmail}">
+      <br/>
+      <a href="resendEmail" class="resendEmail"><spring:message code="resend.email.link"/></a>
+    </c:if>
     <br/>
 
 

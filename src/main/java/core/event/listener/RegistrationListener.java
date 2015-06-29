@@ -50,17 +50,16 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
 
             String recipentEmail = acc.getEmail();
-            String subject = "SOSPhoneBook Registration Confirmation.";
+            String subject = messageSource.getMessage("registration.email.subject", null, event.getLocale());
             String confirmationURL = event.getAppUrl() + "/registrationConfirm?token=" + token;
-            System.out.println("Pre getting message");
 
             String msg = messageSource.getMessage("registration.email.message", null, event.getLocale());
-            System.out.println("The message is: " + msg);
+            System.out.println("The email message is: " + msg);
 
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(recipentEmail);
             mailMessage.setSubject(subject);
-            mailMessage.setText(msg + " " + "http://86.24.42.201:8082" + confirmationURL);
+            mailMessage.setText(msg + " " + confirmationURL);
 
 
             System.out.println("Sending mail to " + recipentEmail);

@@ -12,5 +12,6 @@ public interface AccountService {
     public Account updateAccount(Account acc);
     public VerificationToken createVerificationToken(Account acc, String token);
     public VerificationToken findVerificationToken(String token);
-
+    public Account findAccount(String email);
+    public VerificationToken updateVerificationToken(VerificationToken newToken, Account acc);
 }
