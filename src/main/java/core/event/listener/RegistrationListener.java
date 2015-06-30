@@ -15,6 +15,8 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Component;
 
+import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.UUID;
 
@@ -56,15 +58,14 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
             String msg = messageSource.getMessage("registration.email.message", null, event.getLocale());
             System.out.println("The email message is: " + msg);
 
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(recipentEmail);
-            mailMessage.setSubject(subject);
-            mailMessage.setText(msg + " " + confirmationURL);
-
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipentEmail));
+            mimeMessage.setSubject(subject, "UTF-8");
+            mimeMessage.setText(msg + " " + confirmationURL, "UTF-8");
 
             System.out.println("Sending mail to " + recipentEmail);
             // Send the mail
-            mailSender.send(mailMessage);
+            mailSender.send(mimeMessage);
         } catch (NoSuchMessageException nsme) {
             System.err.println("No such message in the .properties file");
             nsme.printStackTrace();

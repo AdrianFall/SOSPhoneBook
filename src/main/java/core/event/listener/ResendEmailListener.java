@@ -12,6 +12,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.UUID;
 
 /**
@@ -46,20 +49,21 @@ public class ResendEmailListener implements ApplicationListener<OnResendEmailEve
 
         System.out.println("VerificationToken " + ((updatedToken == null) ? "not updated" : "updated and id is: " + updatedToken.getId()));
         if (updatedToken != null) {
-            String recipentEmail = acc.getEmail();
-            String subject = messageSource.getMessage("registration.email.subject", null, event.getLocale());
-            String confirmationURL = event.getAppUrl() + "/registrationConfirm?token=" + updatedToken.getToken();
+            try {
+                String recipentEmail = acc.getEmail();
+                String subject = messageSource.getMessage("registration.email.subject", null, event.getLocale());
+                String confirmationURL = event.getAppUrl() + "/registrationConfirm?token=" + updatedToken.getToken();
 
-            String msg = messageSource.getMessage("registration.email.message", null, event.getLocale());
-            System.out.println("The email message is: " + msg);
+                String msg = messageSource.getMessage("registration.email.message", null, event.getLocale());
+                System.out.println("The email message is: " + msg);
 
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(recipentEmail);
-            mailMessage.setSubject(subject);
-            mailMessage.setText(msg + " " + confirmationURL);
+                MimeMessage mimeMessage = mailSender.createMimeMessage();
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipentEmail));
+                mimeMessage.setSubject(subject, "UTF-8");
+                mimeMessage.setText(msg + " " + confirmationURL, "UTF-8");
 
-            try { // Send the mail
-                mailSender.send(mailMessage);
+                // Send the mail
+                mailSender.send(mimeMessage);
             }   catch (NoSuchMessageException nsme) {
                 System.err.println("No such message in the .properties file");
                 nsme.printStackTrace();

@@ -119,16 +119,19 @@ public class AccountController {
             Account acc = resetToken.getAcc();
             Calendar cal = Calendar.getInstance();
             Long timeDiff = resetToken.getExpiryDate().getTime() - cal.getTime().getTime();
+            System.out.println("Time diff : " + timeDiff);
             if (timeDiff <= 0) {
                 mav.addObject("error", messages.getMessage("reset.password.token.expired", null, request.getLocale()));
                 mav.setViewName("redirect:/login");
-            }
 
-            // Proceed with reseting the password
-            Authentication auth = new UsernamePasswordAuthenticationToken(acc, null, userDetailsService.loadUserByUsername(acc.getEmail()).getAuthorities());
-            System.out.println("Authorities of " + acc.getEmail() + " are : " + auth.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            mav.setViewName("resetPassword");
+            } else {
+
+                // Proceed with reseting the password
+                Authentication auth = new UsernamePasswordAuthenticationToken(acc, null, userDetailsService.loadUserByUsername(acc.getEmail()).getAuthorities());
+                System.out.println("Authorities of " + acc.getEmail() + " are : " + auth.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                mav.setViewName("resetPassword");
+            }
         }
 
         return mav;

@@ -12,19 +12,20 @@
 </head>
 <body>
   <%@include file="fragments/navigation.jspf" %>
-  <%-- Errors --%>
 
-  <c:if  test="${not empty param.error}">
-    <div class="error">${param.error}</div>
-  </c:if>
-
-
-
-  <c:if test="${not empty param.msg}">
-    <div class="msg">${param.msg}</div>
-  </c:if>
   <div class="content-container">
+
     <br/>
+
+    <c:if  test="${not empty param.error}">
+      <div class="error">${param.error}</div>
+    </c:if>
+
+    <c:if test="${not empty param.msg}">
+      <div class="msg">${param.msg}</div>
+    </c:if>
+
+
     <div class="content-header">
       <h1 class="header-title"><spring:message code="login.title"/></h1></div>
     <div class="content-body">
