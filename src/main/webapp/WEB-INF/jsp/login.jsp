@@ -3,8 +3,10 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <spring:url value="resources/css/login/loginForm.css" var="loginFormCss"/>
+<spring:url value="resources/css/normalize/normalize.css" var="normalizeCss"/>
 <head>
-  <title>Sample Form</title>
+  <title><spring:message code="login.title"/></title>
+  <%--<link rel="stylesheet" href="${normalizeCss}"/>--%>
   <link rel="stylesheet" href="${loginFormCss}"/>
 
 </head>
@@ -21,32 +23,44 @@
   <c:if test="${not empty param.msg}">
     <div class="msg">${param.msg}</div>
   </c:if>
-
-  <form:form class="loginForm" action="/login" method="POST" modelAttribute="loginForm">
-    <label for="emailInput"><spring:message code="login.email"/>:</label>
-    <form:input path="email" id="emailInput" />
+  <div class="content-container">
     <br/>
-    <form:errors path="email" cssClass="error" />
-    <c:if test="${not empty requestScope.requestResendEmail}">
-      <br/>
-      <a href="resendEmail" class="resendEmail"><spring:message code="resend.email.link.resendemail"/></a>
-    </c:if>
-    <br/>
+    <div class="content-header">
+      <h1 class="header-title"><spring:message code="login.title"/></h1></div>
+    <div class="content-body">
+      <form:form class="loginForm" action="/login" method="POST" modelAttribute="loginForm">
+        <label for="emailInput"><spring:message code="login.email"/>:</label>
+        <form:input path="email" id="emailInput" />
+        <br/>
+        <form:errors path="email" cssClass="error" />
+        <c:if test="${not empty requestScope.requestResendEmail}">
+          <br/>
+          <a href="resendEmail" class="resendEmail"><spring:message code="login.link.resendemail"/></a>
+        </c:if>
+        <br/>
 
 
-    <label for="passwordInput"><spring:message code="login.password"/>:</label>
-    <form:input type="password" path="password" id="passwordInput" />
-    <br/>
-    <form:errors path="password" cssClass="error" />
+        <label for="passwordInput"><spring:message code="login.password"/>:</label>
+        <form:input type="password" path="password" id="passwordInput" />
+        <br/>
+        <form:errors path="password" cssClass="error" />
 
-    <a href="requestResetPassword" class="requestResetPassword"><spring:message code="login.link.resetpassword"/></a>
+        <input type="hidden" name="${_csrf.parameterName}"
+               value="${_csrf.token}" />
 
-    <br/>
+        <input class="submit" type="submit" value="<spring:message code="login.submit"/>" />
+      </form:form>
 
-    <input type="hidden" name="${_csrf.parameterName}"
-           value="${_csrf.token}" />
-
-    <input class="submit" type="submit" value="<spring:message code="login.submit"/>" />
-  </form:form>
+      <div class="quick-links">
+        <ul>
+          <li><a href="requestResetPassword"><spring:message code="login.link.resetpassword"/></a></li>
+          <li><a href="resendEmail"><spring:message code="login.link.resendemail"/></a></li>
+          <li><a href="register"><spring:message code="login.link.register"/></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <%-- Include footer --%>
+  <%@include file="fragments/footer.jspf" %>
 </body>
 </html>
