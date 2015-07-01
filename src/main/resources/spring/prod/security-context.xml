@@ -13,14 +13,13 @@
         <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN')"/>
         <intercept-url pattern="/main*" access="hasRole('ROLE_USER')"/>
 
+
         <sec:form-login authentication-success-handler-ref="formSuccessHandler"
                         login-page="/WEB-INF/jsp/login.jsp"
                         authentication-failure-handler-ref="authenticationFailureHandler"
                         username-parameter="email"
                         password-parameter="password"/>
-
-
-        <logout />
+        <logout logout-success-url="/login" logout-url="/logout" invalidate-session="true"/>
     </http>
 
 
