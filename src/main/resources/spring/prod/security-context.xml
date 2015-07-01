@@ -10,7 +10,7 @@
     <!-- Web authentication -->
     <http use-expressions="true" entry-point-ref="webAuthenticationEntryPoint">
 
-        <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN') and isFullyAuthenticated()"/>
         <intercept-url pattern="/main*" access="hasRole('ROLE_USER')"/>
 
 
@@ -20,6 +20,12 @@
                         username-parameter="email"
                         password-parameter="password"/>
         <logout logout-success-url="/login" logout-url="/logout" invalidate-session="true"/>
+
+        <!-- enable remember me -->
+        <remember-me
+                token-validity-seconds="86400"
+                remember-me-parameter="remember-me"
+                data-source-ref="dataSource" />
     </http>
 
 

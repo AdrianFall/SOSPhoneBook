@@ -49,7 +49,9 @@
         <input type="hidden" name="${_csrf.parameterName}"
                value="${_csrf.token}" />
 
+        <spring:message code="login.rememberme"/> <input type="checkbox" name="remember-me" />
         <input class="submit" type="submit" value="<spring:message code="login.submit"/>" />
+
       </form:form>
 
       <div class="quick-links">

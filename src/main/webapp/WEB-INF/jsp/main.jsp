@@ -6,6 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="sec"
+          uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:url value="/logout" var="logoutUrl" />
 <html>
@@ -19,5 +21,13 @@ Main Page.
   <input type="submit" value="Log out" />
   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form>
+
+<sec:authorize access="isRememberMe()">
+  <h2># This user is login by "Remember Me Cookies".</h2>
+</sec:authorize>
+
+<sec:authorize access="isFullyAuthenticated()">
+  <h2># This user is login by username / password.</h2>
+</sec:authorize>
 </body>
 </html>

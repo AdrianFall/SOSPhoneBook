@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS persistent_logins;
 DROP TABLE IF EXISTS password_reset_token;
 DROP TABLE IF EXISTS verification_token;
 DROP TABLE IF EXISTS accounts_roles;
@@ -58,4 +59,13 @@ CREATE TABLE password_reset_token
   expiry_date timestamp without time zone NOT NULL,
   CONSTRAINT password_reset_token_pkey PRIMARY KEY (id),
   CONSTRAINT password_reset_token_fkey FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
+CREATE TABLE persistent_logins
+(
+  username VARCHAR(64) NOT NULL,
+  series VARCHAR(64) NOT NULL,
+  token VARCHAR(64) NOT NULL,
+  last_used TIMESTAMP NOT NULL,
+  PRIMARY KEY (series)
 );
