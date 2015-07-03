@@ -50,6 +50,14 @@
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:4.0.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-taglibs:4.0.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:4.0.1.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.social:spring-social-config:1.1.2.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.social:spring-social-core:1.1.2.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.social:spring-social-security:1.1.2.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.social:spring-social-web:1.1.2.RELEASE" />
+          <element id="library" level="project" name="Maven: javax.inject:javax.inject:1" />
+          <element id="library" level="project" name="Maven: org.springframework.social:spring-social-facebook:2.0.1.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.social:spring-social-twitter:1.1.0.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-crypto:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: jstl:jstl:1.2" />
           <element id="library" level="project" name="Maven: javax.mail:mail:1.4.7" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />

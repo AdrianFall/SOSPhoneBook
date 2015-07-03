@@ -19,14 +19,16 @@
 
    <context:component-scan base-package="core.event"/>
 
+    <context:property-placeholder location="classpath:/properties/application.properties"/>
+
     <mvc:annotation-driven />
 
    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-          <property name="username" value="postgres"/>
-          <property name="password" value="003343adaja"/>
-          <property name="url" value="#{ 'jdbc:postgresql://' + 'localhost' + ':' + '5432' + '/sosphonebook' }"/>
-          <property name="driverClassName" value="org.postgresql.Driver"/>
-          <property name="validationQuery" value="SELECT 1"/>
+          <property name="username" value="${dataSource.username}"/>
+          <property name="password" value="${dataSource.password}"/>
+          <property name="url" value="${dataSource.url}"/>
+          <property name="driverClassName" value="${dataSource.driverClassName}"/>
+          <property name="validationQuery" value="${dataSource.validationQuery}"/>
    </bean>
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -54,16 +56,16 @@
    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 
    <!-- Authentication -->
-    <bean id="accountDetailsService" class="core.service.security.AccountDetailsService"/>
+    <!--<bean id="accountDetailsService" class="core.service.security.UserDetailsServiceImpl"/>-->
     <!-- Password encoding -->
     <bean id="bcryptEncoder" name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <!-- Email - emailSender -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="smtp.gmail.com" />
-        <property name="port" value="25"/>
-        <property name="username" value="qiftei@gmail.com"/><!--https://www.google.com/settings/u/2/security/lesssecureapps-->
-        <property name="password" value="adrianq92"/>
+        <property name="host" value="${mail.sender.host}" />
+        <property name="port" value="${mail.sender.port}"/>
+        <property name="username" value="${mail.sender.username}"/><!--https://www.google.com/settings/u/2/security/lesssecureapps-->
+        <property name="password" value="${mail.sender.password}"/>
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.transport.protocol">smtp</prop>
@@ -78,14 +80,14 @@
           class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basenames">
             <list>
-                <value>messages.messages</value>
+                <value>properties.properties</value>
             </list>
         </property>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>-->
     <bean id = "messageSource"
           class= "org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="classpath:/messages/messages"/>
+        <property name="basename" value="classpath:/properties/messages"/>
         <property name="cacheSeconds" value="5"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>

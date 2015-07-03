@@ -1,5 +1,6 @@
 package core.controller;
 
+import core.authentication.SocialMediaEnum;
 import core.entity.Account;
 import core.entity.PasswordResetToken;
 import core.entity.VerificationToken;
@@ -11,12 +12,16 @@ import core.service.AccountService;
 import core.service.EmailService;
 import core.service.exception.EmailExistsException;
 import core.service.exception.EmailNotSentException;
+import core.service.security.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.UserProfile;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -46,6 +52,9 @@ public class AccountController {
     MessageSource messages;
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    ProviderSignInUtils providerSignInUtils;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -90,11 +99,25 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String getRegistrationForm(Model m) {
+    public String getRegistrationForm(Model m, WebRequest request) {
         System.out.println("Getting form account.");
-        RegistrationForm tempRegForm = new RegistrationForm();
-        tempRegForm.setEmail("def@au.lt");
-        m.addAttribute("registrationForm", tempRegForm);
+        RegistrationForm regForm = new RegistrationForm();
+        // Check for provider connections
+        Connection<?> connection = providerSignInUtils.getConnectionFromSession(request);
+        if (connection != null) {
+            System.out.println("Got connection with user profile: " + connection.fetchUserProfile().toString());
+            System.out.println("User email is : " + connection.fetchUserProfile().getEmail());
+            System.out.println("User name: " + connection.fetchUserProfile().getFirstName() + " lastname: " + connection.fetchUserProfile().getLastName());
+            UserProfile userProfile = connection.fetchUserProfile();
+            regForm.setEmail(userProfile.getEmail());
+            regForm.setSignInProvider(SocialMediaEnum.valueOf(connection.getKey().getProviderId().toUpperCase()));
+            System.out.println("Provider = " + regForm.getSignInProvider());
+        } else {
+            System.out.println("No provider.");
+        }
+
+        /*tempRegForm.setEmail("def@au.lt");*/
+        m.addAttribute("registrationForm", regForm);
         return "registrationForm";
     }
 
@@ -265,7 +288,7 @@ public class AccountController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm,
-                                      BindingResult bResult, HttpServletRequest request, Model m) {
+                                      BindingResult bResult, HttpServletRequest request, WebRequest webRequest, Model m) {
 
         // Validate the form password & passConfirm match
         if (!regForm.getPassword().equals(regForm.getConfirmPassword())) {
@@ -287,6 +310,13 @@ public class AccountController {
         newAcc.setEmail(regForm.getEmail());
         newAcc.setPassword(regForm.getPassword());
 
+        System.out.println((regForm.isSocialSignIn()) ? "is social" : "isn't social");
+
+        if (regForm.isSocialSignIn()) {
+            newAcc.setSignInProvider(regForm.getSignInProvider());
+            newAcc.setPassword("SocialPassword");
+            newAcc.setEnabled(true);
+        }
 
         try {// Attempt acc creation
             Account acc = accountService.createAccount(newAcc);
@@ -295,11 +325,18 @@ public class AccountController {
                 // Acc created
                 String appUrl = request.getRequestURL().toString().split("/register")[0];
                 System.out.println("APP URL = " + appUrl);
+                if (regForm.isSocialSignIn()) {
+                    SecurityUtil.logInUser(acc);
+                    providerSignInUtils.doPostSignUp(acc.getEmail(), webRequest);
+                    mav.setViewName("redirect:/main");
+                } else {
+                    /*ProviderSignInUtils.handlePostSignUp(acc.getEmail(), request);*/
+                    emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
+                    // Forward to the login, acknowleding that account has been created
+                    mav.addObject("msg", messages.getMessage("registration.created", null, request.getLocale()));
+                    mav.setViewName("redirect:/login");
+                }
 
-                emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
-                // Forward to the login, acknowleding that account has been created
-                mav.addObject("msg", messages.getMessage("registration.created", null, request.getLocale()));
-                mav.setViewName("redirect:/login");
                 return mav;
             } else { // Acc not created
                 bResult.rejectValue("email", "registration.accCreationError");

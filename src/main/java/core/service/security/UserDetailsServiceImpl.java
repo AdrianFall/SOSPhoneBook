@@ -1,5 +1,6 @@
 package core.service.security;
 
+import core.authentication.AccountUserDetails;
 import core.entity.Account;
 import core.entity.Role;
 import core.repository.AccountRepo;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 @Service("accountDetailsService")
 @Transactional
-public class AccountDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
 
     @Autowired
     private AccountRepo accountRepository;
@@ -30,23 +31,28 @@ public class AccountDetailsService implements org.springframework.security.core.
         System.out.println("Finding by email: " + email);
         Account acc = accountRepository.findAccountByEmail(email);
         if (acc == null) {
-            System.out.println("AccountDetailsService - No username was found.");
+            System.out.println("UserDetailsServiceImpl - No username was found.");
             throw new UsernameNotFoundException("Email not found");
         }
 
-        List<GrantedAuthority> authorities =
+        AccountUserDetails principal = AccountUserDetails.getBuilder()
+                .id(acc.getId())
+                .password(acc.getPassword())
+                .roles(acc.getAccRoles())
+                .socialSignInProvider(acc.getSignInProvider())
+                .username(acc.getEmail())
+                .enabled(acc.isEnabled())
+                .build();
+
+        return principal;
+
+      /*  List<GrantedAuthority> authorities =
                 buildUserAuthority(acc.getAccRoles());
 
-        return buildUserForAuthentication(acc, authorities);
-       /* boolean enabled = true;
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;*/
+        return buildUserForAuthentication(acc, authorities);*/
+     }
 
-        /*return new org.springframework.security.core.userdetails.User(acc.getUsername(), acc.getPassword(), enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getAuthorities(acc.getRoles()));*/
-    }
-
-    private User buildUserForAuthentication(Account acc,
+    /*private User buildUserForAuthentication(Account acc,
                                             List<GrantedAuthority> authorities) {
         return new User(acc.getEmail(), acc.getPassword(),
                 acc.isEnabled(), true, true, true, authorities);
@@ -64,5 +70,5 @@ public class AccountDetailsService implements org.springframework.security.core.
         List<GrantedAuthority> Result = new ArrayList<GrantedAuthority>(setAuths);
 
         return Result;
-    }
+    }*/
 }

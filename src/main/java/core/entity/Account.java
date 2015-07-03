@@ -1,6 +1,7 @@
 package core.entity;
 
 import com.sun.istack.internal.NotNull;
+import core.authentication.SocialMediaEnum;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -24,9 +25,13 @@ public class Account {
 
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "accounts_roles",
-                joinColumns = {@JoinColumn(name = "account_id")},
-                inverseJoinColumns = {@JoinColumn(name = "role_id")})
+            joinColumns = {@JoinColumn(name = "account_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> accRoles;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sign_in_provider", length = 20)
+    private SocialMediaEnum signInProvider;
 
     public Account(String email, String password) {
         this.password = password;
@@ -35,6 +40,14 @@ public class Account {
 
     public Account() {
 
+    }
+
+    public SocialMediaEnum getSignInProvider() {
+        return signInProvider;
+    }
+
+    public void setSignInProvider(SocialMediaEnum signInProvider) {
+        this.signInProvider = signInProvider;
     }
 
     public Long getId() {

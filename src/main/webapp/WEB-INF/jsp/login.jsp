@@ -54,6 +54,18 @@
 
       </form:form>
 
+      <div class="social-links">
+        <div scope="user_likes,email" class="col-lg-4">
+          <!-- Add Facebook sign in button -->
+        <%--  <form action="${pageContext.request.contextPath}/auth/facebook" method="POST">
+            <input type="hidden" name="scope" value="publish_stream,offline_access" />
+            <button type="submit" class="btn btn-facebook"><i class="icon-facebook"></i>Sign in with fb</button>
+          </form>--%>
+          <a href="${pageContext.request.contextPath}/auth/facebook?scope=email"><button class="btn btn-facebook"><i class="icon-facebook"></i>Sign in with fb</button></a>
+
+        </div>
+      </div>
+
       <div class="quick-links">
         <ul>
           <li><a href="requestResetPassword"><spring:message code="login.link.resetpassword"/></a></li>

@@ -8,6 +8,7 @@
 --%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <spring:url value="resources/css/registration/registrationForm.css" var="registrationFormCss"/>
 <html>
@@ -28,6 +29,7 @@
     <form:errors path="email" cssClass="error" />
     <br/>
 
+    <%--<c:if test="${registrationForm.signInProvider == null}">--%>
     <label for="passwordInput"><spring:message code="registration.password"/>:</label>
     <form:input type="password" path="password" id="passwordInput" />
     <form:errors path="password" cssClass="error" />
@@ -37,6 +39,17 @@
     <form:input type="password" path="confirmPassword" id="confirmPasswordInput" />
     <form:errors path="confirmPassword" cssClass="error" />
     <br/>
+<%--    </c:if>
+
+    <c:if test="${registrationForm.signInProvider != null}">
+      <form:hidden path="password"/>
+      <form:hidden path="confirmPassword"/>
+    </c:if>--%>
+
+    <c:if test="${registrationForm.signInProvider != null}">
+      <form:hidden path="signInProvider"/>
+    </c:if>
+
     <input class="submit" type="submit" value="<spring:message code="registration.submit"/>" />
   </form:form>
 </body>

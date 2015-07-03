@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS UserConnection;
 DROP TABLE IF EXISTS persistent_logins;
 DROP TABLE IF EXISTS password_reset_token;
 DROP TABLE IF EXISTS verification_token;
@@ -10,7 +11,8 @@ CREATE TABLE account
 (
   id serial NOT NULL,
   email character varying(255) NOT NULL,
-  password character varying(255),
+  password character varying(255) NOT NULL,
+  sign_in_provider character varying(20),
   enabled boolean NOT NULL DEFAULT FALSE,
   CONSTRAINT account_pkey PRIMARY KEY (id)
 );
@@ -69,3 +71,17 @@ CREATE TABLE persistent_logins
   last_used TIMESTAMP NOT NULL,
   PRIMARY KEY (series)
 );
+
+create table UserConnection (userId varchar(255) not null,
+    providerId varchar(255) not null,
+    providerUserId varchar(255),
+    rank int not null,
+    displayName varchar(255),
+    profileUrl varchar(512),
+    imageUrl varchar(512),
+    accessToken varchar(255) not null,
+    secret varchar(255),
+    refreshToken varchar(255),
+    expireTime bigint,
+    primary key (userId, providerId, providerUserId));
+create unique index UserConnectionRank on UserConnection(userId, providerId, rank);

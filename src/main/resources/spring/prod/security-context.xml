@@ -22,61 +22,25 @@
         <logout logout-success-url="/login" logout-url="/logout" invalidate-session="true"/>
 
         <!-- enable remember me -->
-        <remember-me
+        <remember-me user-service-ref="userDetailsService"
                 token-validity-seconds="86400"
                 remember-me-parameter="remember-me"
                 data-source-ref="dataSource" />
+
+        <!-- Adds social authentication filter to the Spring Security filter chain. -->
+        <sec:custom-filter ref="socialAuthenticationFilter" before="PRE_AUTH_FILTER" />
+
     </http>
 
-
-   <!-- <http use-expressions="true" entry-point-ref="webAuthenticationEntryPoint">
-
-        <intercept-url pattern="/**" access="isAnonymous()"/> // By default needs user
-
-        <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
-        <intercept-url pattern="/index*" access="isAnonymous()"/>
-        <intercept-url pattern="/" access="isAnonymous()"/>
-        <intercept-url pattern="/register*" access="isAnonymous()"/>
-        <intercept-url pattern="/resources/**" access="isAnonymous()"/>
-
-        <intercept-url pattern="/admin" access="ADMIN"/>
-
-        <sec:form-login authentication-success-handler-ref="formSuccessHandler" authentication-failure-handler-ref="formFailutreHandler"/>
-
-        <logout />
-    </http>-->
-
-
-
-
-    <!-- Old - form based auth -->
-<!--   <http auto-config="true">
-       <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
-       <intercept-url pattern="/index" access="isAnonymous()"/>
-       <intercept-url pattern="/account*" access="isAnonymous()"/>
-       <intercept-url pattern="/**" access="isAuthenticated()"/>
-       <intercept-url pattern="/admin" access="ADMIN"/>
-
-
-       <form-login
-               login-page="/login"
-               default-target-url="/login.html?msg=success"
-               username-parameter="email"
-               password-parameter="password"
-               authentication-failure-handler-ref="authenticationFailureHandler"/>
-       <logout logout-success-url="/index.html" />
-
-
-   </http>-->
-
-
     <authentication-manager alias="authenticationManager">
-        <authentication-provider user-service-ref="accountDetailsService">
+        <sec:authentication-provider user-service-ref="accountDetailsService">
             <password-encoder ref="bcryptEncoder"/>
-        </authentication-provider>
+        </sec:authentication-provider>
+
+        <sec:authentication-provider ref="socialAuthenticationProvider"/>
+
     </authentication-manager>
 
     <!-- Turn on the security annotations for defining the roles -->
     <global-method-security secured-annotations="enabled" />
-
 </beans:bean>
