@@ -2,6 +2,7 @@ package core.service.impl;
 
 import core.entity.Account;
 import core.entity.PasswordResetToken;
+import core.entity.Test;
 import core.entity.VerificationToken;
 import core.repository.AccountRepo;
 import core.repository.PasswordResetTokenRepo;
@@ -40,6 +41,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    @Override
+    public Test getTest(Account acc) {
+        return accountRepo.getTest(acc);
+    }
+
+    @Override
+    public Test setTest(Account acc, String testWord) {
+        return accountRepo.setTestWord(acc, testWord);
     }
 
     @Override

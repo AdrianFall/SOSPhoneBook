@@ -12,6 +12,7 @@
 
         <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN') and isFullyAuthenticated()"/>
         <intercept-url pattern="/main*" access="hasRole('ROLE_USER')"/>
+        <intercept-url pattern="/test*" access="hasRole('ROLE_USER')"/>
 
 
         <sec:form-login authentication-success-handler-ref="formSuccessHandler"

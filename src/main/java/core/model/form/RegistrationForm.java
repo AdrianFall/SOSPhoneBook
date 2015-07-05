@@ -30,15 +30,6 @@ public class RegistrationForm {
     @NotNull
     private String confirmPassword;
 
-    private SocialMediaEnum signInProvider;
-
-    public boolean isNormalRegistration() {
-        return signInProvider == null;
-    }
-
-    public boolean isSocialSignIn() {
-        return signInProvider != null;
-    }
 
     public String getEmail() {
         return email;
@@ -64,7 +55,4 @@ public class RegistrationForm {
         this.confirmPassword = confirmPassword;
     }
 
-    public SocialMediaEnum getSignInProvider() { return signInProvider; }
-
-    public void setSignInProvider(SocialMediaEnum signInProvider) { this.signInProvider = signInProvider; }
 }

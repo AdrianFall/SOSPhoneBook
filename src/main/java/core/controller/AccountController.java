@@ -98,30 +98,6 @@ public class AccountController {
         return mav;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String getRegistrationForm(Model m, WebRequest request) {
-        System.out.println("Getting form account.");
-        RegistrationForm regForm = new RegistrationForm();
-        // Check for provider connections
-        Connection<?> connection = providerSignInUtils.getConnectionFromSession(request);
-        if (connection != null) {
-            System.out.println("Got connection with user profile: " + connection.fetchUserProfile().toString());
-            System.out.println("User email is : " + connection.fetchUserProfile().getEmail());
-            System.out.println("User name: " + connection.fetchUserProfile().getFirstName() + " lastname: " + connection.fetchUserProfile().getLastName());
-            UserProfile userProfile = connection.fetchUserProfile();
-            regForm.setEmail(userProfile.getEmail());
-            regForm.setSignInProvider(SocialMediaEnum.valueOf(connection.getKey().getProviderId().toUpperCase()));
-            System.out.println("Provider = " + regForm.getSignInProvider());
-        } else {
-            System.out.println("No provider.");
-        }
-
-        /*tempRegForm.setEmail("def@au.lt");*/
-        m.addAttribute("registrationForm", regForm);
-        return "registrationForm";
-    }
-
-
     @RequestMapping(value = "/resendEmail", method = RequestMethod.GET)
     public String resendEmail(@Valid @ModelAttribute ResendEmailForm resentEmailForm) {
         return "resendEmail";
@@ -286,6 +262,85 @@ public class AccountController {
         return mav;
     }
 
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String getRegistrationForm(Model m, WebRequest request) {
+        System.out.println("Getting form account.");
+        RegistrationForm regForm = new RegistrationForm();
+        // Check for provider connections
+        /*Connection<?> connection = providerSignInUtils.getConnectionFromSession(request);
+        if (connection != null) {
+            System.out.println("Got connection with user profile: " + connection.fetchUserProfile().toString());
+            System.out.println("User email is : " + connection.fetchUserProfile().getEmail());
+            System.out.println("User name: " + connection.fetchUserProfile().getFirstName() + " lastname: " + connection.fetchUserProfile().getLastName());
+            UserProfile userProfile = connection.fetchUserProfile();
+            regForm.setEmail(userProfile.getEmail());
+            regForm.setSignInProvider(SocialMediaEnum.valueOf(connection.getKey().getProviderId().toUpperCase()));
+            System.out.println("Provider = " + regForm.getSignInProvider());
+        } else {
+            System.out.println("No provider.");
+        }*/
+
+        /*tempRegForm.setEmail("def@au.lt");*/
+        m.addAttribute("registrationForm", regForm);
+        return "registrationForm";
+    }
+
+    @RequestMapping(value = "/signin", method = RequestMethod.GET)
+    public String socialSignIn(WebRequest webRequest){
+        System.out.println("Social sign in .GET");
+        Connection<?> connection = providerSignInUtils.getConnectionFromSession(webRequest);
+        System.out.println((connection != null) ? "connection exists " : " connection doesn't exist");
+        return ("redirect:/social/register");
+    }
+
+    @RequestMapping(value = "/social/register", method = RequestMethod.GET)
+    public ModelAndView createSocialAccount(WebRequest webRequest, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+
+        Connection<?> connection = providerSignInUtils.getConnectionFromSession(webRequest);
+        if (connection != null) {
+            System.out.println("Got connection with user profile: " + connection.fetchUserProfile().toString() + " and profile url: " + connection.getProfileUrl());
+            System.out.println("User email is : " + connection.fetchUserProfile().getEmail());
+            System.out.println("User name: " + connection.fetchUserProfile().getFirstName() + " lastname: " + connection.fetchUserProfile().getLastName());
+            UserProfile userProfile = connection.fetchUserProfile();
+            System.out.println("Obtained user profile.");
+
+            Account newAcc = new Account();
+
+            // TODO consider changing it to different id
+            newAcc.setEmail(connection.getProfileUrl());
+
+            newAcc.setPassword("SocialPassword");
+
+            newAcc.setSignInProvider(SocialMediaEnum.valueOf(connection.getKey().getProviderId().toUpperCase()));
+            newAcc.setPassword("SocialPassword");
+            newAcc.setEnabled(true);
+            try {
+                Account acc = accountService.createAccount(newAcc);
+                if (acc != null) {
+                    // Acc created
+                    String appUrl = request.getRequestURL().toString().split("/register")[0];
+                    System.out.println("APP URL = " + appUrl);
+
+                    SecurityUtil.logInUser(acc);
+                    providerSignInUtils.doPostSignUp(acc.getEmail(), webRequest);
+                    mav.setViewName("redirect:/main");
+            }
+            } catch(EmailExistsException eee) {
+                mav.addObject("error", messages.getMessage("social.registration.idExists", null, webRequest.getLocale()));
+                mav.setViewName("redirect:/login");
+                //eee.printStackTrace();
+            }
+
+        } else {
+            String message = messages.getMessage("social.sign.in.failure", null, webRequest.getLocale());
+            mav.addObject("error", message);
+            mav.setViewName("redirect:/login");
+        }
+
+        return mav;
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView createAccount(@Valid @ModelAttribute RegistrationForm regForm,
                                       BindingResult bResult, HttpServletRequest request, WebRequest webRequest, Model m) {
@@ -305,18 +360,10 @@ public class AccountController {
             return new ModelAndView("registrationForm");
         }
 
-        // Build up the Account entity (to be used for createAcc(arg))
+        // Build up the Account entity
         Account newAcc = new Account();
         newAcc.setEmail(regForm.getEmail());
         newAcc.setPassword(regForm.getPassword());
-
-        System.out.println((regForm.isSocialSignIn()) ? "is social" : "isn't social");
-
-        if (regForm.isSocialSignIn()) {
-            newAcc.setSignInProvider(regForm.getSignInProvider());
-            newAcc.setPassword("SocialPassword");
-            newAcc.setEnabled(true);
-        }
 
         try {// Attempt acc creation
             Account acc = accountService.createAccount(newAcc);
@@ -325,17 +372,13 @@ public class AccountController {
                 // Acc created
                 String appUrl = request.getRequestURL().toString().split("/register")[0];
                 System.out.println("APP URL = " + appUrl);
-                if (regForm.isSocialSignIn()) {
-                    SecurityUtil.logInUser(acc);
-                    providerSignInUtils.doPostSignUp(acc.getEmail(), webRequest);
-                    mav.setViewName("redirect:/main");
-                } else {
-                    /*ProviderSignInUtils.handlePostSignUp(acc.getEmail(), request);*/
-                    emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
-                    // Forward to the login, acknowleding that account has been created
-                    mav.addObject("msg", messages.getMessage("registration.created", null, request.getLocale()));
-                    mav.setViewName("redirect:/login");
-                }
+
+                /*ProviderSignInUtils.handlePostSignUp(acc.getEmail(), request);*/
+                emailService.sendConfirmationEmail(new OnRegistrationCompleteEvent(newAcc, request.getLocale(), appUrl));
+                // Forward to the login, acknowleding that account has been created
+                mav.addObject("msg", messages.getMessage("registration.created", null, request.getLocale()));
+                mav.setViewName("redirect:/login");
+
 
                 return mav;
             } else { // Acc not created

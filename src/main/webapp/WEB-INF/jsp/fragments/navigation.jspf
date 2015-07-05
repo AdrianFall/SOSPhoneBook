@@ -6,10 +6,12 @@
 <spring:url value="resources/js/bootstrap/bootstrap.min.js" var="bootstrapJs"/>
 <spring:url value="resources/js/jquery/jquery-2.1.4.min.js" var="jqueryJs"/>
 <spring:url value="resources/css/navigation/navigation.css" var="navigationCss"/>
+<spring:url value="resources/css/fontawesome/font-awesome.min.css" var="fontAwesomeCss"/>
 
 <link rel="stylesheet" href="${bootstrapCss}"/>
 <link rel="stylesheet" href="${bootstrapThemeCss}"/>
 <link rel="stylesheet" href="${navigationCss}"/>
+<link rel="stylesheet" href="${fontAwesomeCss}"/>
 
 <script src="${jqueryJs}"></script>
 

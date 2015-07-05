@@ -5,5 +5,7 @@ package core.authentication;
  */
 public enum SocialMediaEnum {
     FACEBOOK,
-    TWITTER
+    TWITTER,
+    LINKEDIN,
+    GOOGLE
 }

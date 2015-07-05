@@ -233,6 +233,20 @@
             <version>1.1.0.RELEASE</version>
         </dependency>
 
+        <!-- Spring Social Google -->
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-google</artifactId>
+            <version>1.0.0.RELEASE</version>
+        </dependency>
+
+        <!-- Spring Social Linkedin -->
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-linkedin</artifactId>
+            <version>1.0.1.RELEASE</version>
+        </dependency>
+
         <!-- JSTL -->
         <dependency>
             <groupId>jstl</groupId>

@@ -1,6 +1,7 @@
 package core.repository;
 
 import core.entity.Account;
+import core.entity.Test;
 import core.entity.VerificationToken;
 
 /**
@@ -13,4 +14,6 @@ public interface AccountRepo {
     public Account findAccountByEmail(String email);
     public Account createAccount(Account acc);
     public Account updateAccount(Account acc);
+    public Test getTest(Account acc);
+    public Test setTestWord(Account acc, String testWord);
 }

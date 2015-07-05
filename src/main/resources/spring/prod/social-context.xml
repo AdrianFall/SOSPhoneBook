@@ -5,11 +5,16 @@
        xmlns:twitter="http://www.springframework.org/schema/social/twitter"
        xmlns:social="http://www.springframework.org/schema/social"
        xmlns:facebook="http://www.springframework.org/schema/social/facebook"
+       xmlns:google="http://www.springframework.org/schema/social/google"
+       xmlns:linkedin="http://www.springframework.org/schema/social/linkedin"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        http://www.springframework.org/schema/social http://www.springframework.org/schema/social/spring-social.xsd
        http://www.springframework.org/schema/social/twitter http://www.springframework.org/schema/social/spring-social-twitter.xsd
-       http://www.springframework.org/schema/social/facebook http://www.springframework.org/schema/social/spring-social-facebook.xsd">
+       http://www.springframework.org/schema/social/facebook http://www.springframework.org/schema/social/spring-social-facebook.xsd
+       http://www.springframework.org/schema/social/google http://www.springframework.org/schema/social/spring-social-google.xsd
+       http://www.springframework.org/schema/social/linkedin http://www.springframework.org/schema/social/spring-social-linkedin.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!-- Ensures that configuration properties are read from a property file -->
     <context:property-placeholder location="classpath:/properties/application.properties"/>
@@ -26,7 +31,7 @@
         <constructor-arg index="3" ref="connectionFactoryLocator"/>
 
         <!-- Sets the url of the registration form. -->
-        <property name="signupUrl" value="/register"/>
+        <property name="signupUrl" value="/social/register"/>
         <property name="postLoginUrl" value="/main"/>
         <property name="alwaysUsePostLoginUrl" value="true"/>
     </bean>
@@ -70,25 +75,41 @@
     -->
     <bean id="textEncryptor" class="org.springframework.security.crypto.encrypt.Encryptors" factory-method="noOpText" />
 
-    <!--
-        Configures FB and Twitter support.
-    -->
-    <facebook:config app-id="${facebook.app.id}" app-secret="${facebook.app.secret}"/>
 
     <!-- http://stackoverflow.com/questions/17732858/how-to-specify-oauth2-scope-with-spring-social-security-socialauthenticationfilt -->
     <!--<bean id="connectionFactoryLocator" class="org.springframework.social.security.SocialAuthenticationServiceRegistry">
         <property name="authenticationServices">
             <list>
+                &lt;!&ndash; Facebook &ndash;&gt;
                 <bean class="org.springframework.social.facebook.security.FacebookAuthenticationService">
                     <constructor-arg value="${facebook.app.id}"/>
                     <constructor-arg value="${facebook.app.secret}"/>
-                    <property name="defaultScope" value="offline_access,email"/>
+                </bean>
+
+                &lt;!&ndash;  Twitter &ndash;&gt;
+                &lt;!&ndash;<bean class="org.springframework.social.twitter.security.TwitterAuthenticationService">
+                    <constructor-arg value="${twitter.consumer.key}"/>
+                    <constructor-arg value="${twitter.consumer.secret"/>
+                </bean>&ndash;&gt;
+
+                &lt;!&ndash; Google &ndash;&gt;
+                <bean class="org.springframework.social.google.security.GoogleAuthenticationService">
+                    <constructor-arg value="${google.client.id}"/>
+                    <constructor-arg value="${google.client.secret}"/>
                 </bean>
             </list>
         </property>
     </bean>-->
 
+
+    <facebook:config app-id="${facebook.app.id}" app-secret="${facebook.app.secret}"/>
     <twitter:config app-id="${twitter.consumer.key}" app-secret="${twitter.consumer.secret}"/>
+    <google:config app-id="${google.client.id}" app-secret="${google.client.secret}" authentication-service-class=""/>
+    <linkedin:config app-id="${linkedin.client.id}" app-secret="${linkedin.client.secret}"/>
+
+    <!--<google:config app-id="${google.client.id}" app-secret="${google.client.secret}"/>-->
+
+
 
     <!--
         Configures the connection repository. This application uses JDBC

@@ -2,6 +2,7 @@ package core.service;
 
 import core.entity.Account;
 import core.entity.PasswordResetToken;
+import core.entity.Test;
 import core.entity.VerificationToken;
 import core.service.exception.EmailExistsException;
 
@@ -18,4 +19,6 @@ public interface AccountService {
     public PasswordResetToken createPasswordResetToken(Account acc, String token);
     public PasswordResetToken findPasswordResetToken(String token);
     public String encodePassword(String password);
+    public Test getTest(Account acc);
+    public Test setTest(Account acc, String testWord);
 }

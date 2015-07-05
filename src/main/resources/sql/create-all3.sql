@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS Test;
 DROP TABLE IF EXISTS UserConnection;
 DROP TABLE IF EXISTS persistent_logins;
 DROP TABLE IF EXISTS password_reset_token;
@@ -85,3 +86,11 @@ create table UserConnection (userId varchar(255) not null,
     expireTime bigint,
     primary key (userId, providerId, providerUserId));
 create unique index UserConnectionRank on UserConnection(userId, providerId, rank);
+
+create table Test (
+  id serial not null,
+  account_id bigint NOT NULL,
+  test_word varchar(100),
+  CONSTRAINT test_pkey PRIMARY KEY (id),
+  CONSTRAINT test_fkey FOREIGN KEY (account_id) REFERENCES account(id)
+);

@@ -2,6 +2,7 @@ package core.repository.impl.jpa;
 
 import core.entity.Account;
 import core.entity.Role;
+import core.entity.Test;
 import core.repository.AccountRepo;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,5 +83,40 @@ public class AccountRepoImpl implements AccountRepo {
     @Override
     public Account updateAccount(Account acc) {
         return emgr.merge(acc);
+    }
+
+    @Override
+    public Test getTest(Account acc) {
+        Query query = emgr.createQuery("SELECT t FROM Test t WHERE t.acc =:acc");
+        query.setParameter("acc", acc);
+
+        if (query.getResultList().isEmpty())
+            return null;
+
+        Test test = (Test) query.getResultList().get(0);
+
+        return test;
+    }
+
+    @Override
+    public Test setTestWord(Account acc, String testWord) {
+        Test test = getTest(acc);
+        if (test == null) { // no record for this acc yet
+            System.out.println("      GOTTA PERSIST NEW TEST");
+            // persist
+            test = new Test();
+            test.setAcc(acc);
+            test.setTest_word(testWord);
+            emgr.persist(test);
+            emgr.flush();
+            System.out.println("               PERSISTED!");
+        } else { // record exists for this acc
+            System.out.println("          FOUND EXISTING RECORD, GONNA MERGE");
+            test.setTest_word(testWord);
+            emgr.merge(test);
+            emgr.flush();
+        }
+
+        return test;
     }
 }
