@@ -2,6 +2,7 @@ package core.repository.impl.jpa;
 
 import core.entity.Account;
 import core.entity.Role;
+import core.entity.SocialProvider;
 import core.entity.Test;
 import core.repository.AccountRepo;
 import org.springframework.stereotype.Repository;
@@ -52,9 +53,6 @@ public class AccountRepoImpl implements AccountRepo {
 
     @Override
     public Account createAccount(Account acc) {
-        // Set account disabled by default
-        acc.setEnabled(false);
-
         // Find the user role
         Query query = emgr.createQuery("SELECT r FROM Role r WHERE r.role = :role");
         query.setParameter("role", "ROLE_USER");

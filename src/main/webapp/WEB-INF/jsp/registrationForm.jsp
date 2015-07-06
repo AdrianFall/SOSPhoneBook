@@ -39,16 +39,6 @@
     <form:input type="password" path="confirmPassword" id="confirmPasswordInput" />
     <form:errors path="confirmPassword" cssClass="error" />
     <br/>
-<%--    </c:if>
-
-    <c:if test="${registrationForm.signInProvider != null}">
-      <form:hidden path="password"/>
-      <form:hidden path="confirmPassword"/>
-    </c:if>--%>
-
-    <%--<c:if test="${registrationForm.signInProvider != null}">
-      <form:hidden path="signInProvider"/>
-    </c:if>--%>
 
     <input class="submit" type="submit" value="<spring:message code="registration.submit"/>" />
   </form:form>

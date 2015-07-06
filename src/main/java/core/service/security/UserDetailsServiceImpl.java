@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
                 .id(acc.getId())
                 .password(acc.getPassword())
                 .roles(acc.getAccRoles())
-                .socialSignInProvider(acc.getSignInProvider())
+                .socialSignInProviders(acc.getAccSocialProviders())
                 .username(acc.getEmail())
                 .enabled(acc.isEnabled())
                 .build();

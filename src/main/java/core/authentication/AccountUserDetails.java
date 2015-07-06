@@ -1,6 +1,7 @@
 package core.authentication;
 
 import core.entity.Role;
+import core.entity.SocialProvider;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.social.security.SocialUser;
@@ -18,7 +19,7 @@ public class AccountUserDetails extends SocialUser {
 
     private Set<Role> roles;
 
-    private SocialMediaEnum socialSignInProvider;
+    private Set<SocialProvider> socialProviders;
 
     public AccountUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
@@ -35,7 +36,7 @@ public class AccountUserDetails extends SocialUser {
         private String password;
         private Set<Role> roles;
         private boolean enabled;
-        private SocialMediaEnum socialSignInProvider;
+        private Set<SocialProvider> socialProviders;
         private Set<GrantedAuthority> authorities;
 
         public Builder() {
@@ -67,10 +68,11 @@ public class AccountUserDetails extends SocialUser {
             return this;
         }
 
-        public Builder socialSignInProvider(SocialMediaEnum socialSignInProvider) {
-            this.socialSignInProvider = socialSignInProvider;
+        public Builder socialSignInProviders(Set<SocialProvider> socialProviders) {
+            this.socialProviders = socialProviders;
             return this;
         }
+
 
         public Builder username(String username) {
             this.username = username;
@@ -87,7 +89,7 @@ public class AccountUserDetails extends SocialUser {
 
             user.id = id;
             user.roles = roles;
-            user.socialSignInProvider = socialSignInProvider;
+            user.socialProviders = socialProviders;
 
             return user;
         }
@@ -109,12 +111,12 @@ public class AccountUserDetails extends SocialUser {
         this.roles = roles;
     }
 
-    public SocialMediaEnum getSocialSignInProvider() {
-        return socialSignInProvider;
+    public Set<SocialProvider> getSocialProviders() {
+        return socialProviders;
     }
 
-    public void setSocialSignInProvider(SocialMediaEnum socialSignInProvider) {
-        this.socialSignInProvider = socialSignInProvider;
+    public void setSocialProviders(Set<SocialProvider> socialProviders) {
+        this.socialProviders = socialProviders;
     }
 
     public static Builder getBuilder() {

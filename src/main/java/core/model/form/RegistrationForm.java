@@ -1,10 +1,5 @@
 package core.model.form;
 
-        import core.authentication.SocialMediaEnum;
-        import org.hibernate.validator.constraints.Email;
-        import org.hibernate.validator.constraints.NotEmpty;
-        import validation.PasswordMatches;
-
         import javax.validation.constraints.NotNull;
         import javax.validation.constraints.Pattern;
         import javax.validation.constraints.Size;

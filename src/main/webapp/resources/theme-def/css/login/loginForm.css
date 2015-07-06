@@ -17,8 +17,8 @@ form {line-height: 160%; }
 .social-links { width: 210px; margin-left: auto; margin-right: auto; }
 .facebook-link { margin-bottom: 2px;}
 .facebook-link a:hover { color: #f9f2f4; }
-
-.twitter-link a:hover { color:#f9f2f4; }
+.linkedin-link { margin-bottom: 2px;}
+.linkedin-link a:hover { color:#f9f2f4; }
 .submit {
     margin-left: 120px;
     margin-right:auto;

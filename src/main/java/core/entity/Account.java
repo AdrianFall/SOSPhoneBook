@@ -1,12 +1,6 @@
 package core.entity;
 
-import com.sun.istack.internal.NotNull;
-import core.authentication.SocialMediaEnum;
-
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,9 +23,15 @@ public class Account {
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> accRoles;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(name = "accounts_social_providers",
+            joinColumns = {@JoinColumn(name = "account_id")},
+            inverseJoinColumns = {@JoinColumn(name = "provider_name")})
+    private Set<SocialProvider> accSocialProviders;
+
+    /*@Enumerated(EnumType.STRING)
     @Column(name = "sign_in_provider", length = 20)
-    private SocialMediaEnum signInProvider;
+    private SocialMediaEnum signInProvider;*/
 
     public Account(String email, String password) {
         this.password = password;
@@ -40,14 +40,6 @@ public class Account {
 
     public Account() {
 
-    }
-
-    public SocialMediaEnum getSignInProvider() {
-        return signInProvider;
-    }
-
-    public void setSignInProvider(SocialMediaEnum signInProvider) {
-        this.signInProvider = signInProvider;
     }
 
     public Long getId() {
@@ -89,5 +81,13 @@ public class Account {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Set<SocialProvider> getAccSocialProviders() {
+        return accSocialProviders;
+    }
+
+    public void setAccSocialProviders(Set<SocialProvider> accSocialProviders) {
+        this.accSocialProviders = accSocialProviders;
     }
 }

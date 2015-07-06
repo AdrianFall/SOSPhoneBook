@@ -1,8 +1,8 @@
 package core.controller;
 
-import core.authentication.SocialMediaEnum;
 import core.entity.Account;
 import core.entity.PasswordResetToken;
+import core.entity.SocialProvider;
 import core.entity.VerificationToken;
 import core.event.OnRegistrationCompleteEvent;
 import core.event.OnResendEmailEvent;
@@ -10,6 +10,7 @@ import core.event.OnResetPasswordEvent;
 import core.model.form.*;
 import core.service.AccountService;
 import core.service.EmailService;
+import core.service.SocialService;
 import core.service.exception.EmailExistsException;
 import core.service.exception.EmailNotSentException;
 import core.service.security.util.SecurityUtil;
@@ -36,8 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Calendar;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by Adrian on 09/05/2015.
@@ -52,6 +52,8 @@ public class AccountController {
     MessageSource messages;
     @Autowired
     EmailService emailService;
+    @Autowired
+    SocialService socialService;
 
     @Autowired
     ProviderSignInUtils providerSignInUtils;
@@ -285,17 +287,18 @@ public class AccountController {
         return "registrationForm";
     }
 
-    @RequestMapping(value = "/signin", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/signin", method = RequestMethod.GET)
     public String socialSignIn(WebRequest webRequest){
         System.out.println("Social sign in .GET");
         Connection<?> connection = providerSignInUtils.getConnectionFromSession(webRequest);
         System.out.println((connection != null) ? "connection exists " : " connection doesn't exist");
         return ("redirect:/social/register");
-    }
+    }*/
 
     @RequestMapping(value = "/social/register", method = RequestMethod.GET)
     public ModelAndView createSocialAccount(WebRequest webRequest, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
+        mav.setViewName("redirect:/login");
 
         Connection<?> connection = providerSignInUtils.getConnectionFromSession(webRequest);
         if (connection != null) {
@@ -305,7 +308,65 @@ public class AccountController {
             UserProfile userProfile = connection.fetchUserProfile();
             System.out.println("Obtained user profile.");
 
-            Account newAcc = new Account();
+            String userProfileEmail = connection.fetchUserProfile().getEmail();
+            String socialProviderName = connection.getKey().getProviderId().toUpperCase();
+
+            if (userProfileEmail == null) {
+                mav.addObject("error", messages.getMessage("social.registration.email.not.provided", null, webRequest.getLocale()));
+                return mav;
+            }
+
+            // Check whether the account with userProfileEmail already exists
+            Account existsingAccount = accountService.findAccount(userProfileEmail);
+            if (existsingAccount != null) {
+                Set<SocialProvider> accSocialProviders = existsingAccount.getAccSocialProviders();
+                SocialProvider newSocialProvider = socialService.getSocialProviderByName(socialProviderName);
+                if (newSocialProvider != null)
+                    accSocialProviders.add(newSocialProvider);
+                else {
+                    mav.addObject("error", messages.getMessage("social.registration.provider.not.supported", null, webRequest.getLocale()));
+                    return mav;
+                }
+                existsingAccount.setAccSocialProviders(accSocialProviders);
+                // set the account as enabled since this (social reg) is somewhat equivalent to acc confirmation via email
+                existsingAccount.setEnabled(true);
+                Account updatedAccount = accountService.updateAccount(existsingAccount);
+                if (updatedAccount == null)
+                    mav.addObject("error", messages.getMessage("social.registration.could.not.update.account", null, webRequest.getLocale()));
+                else {
+                    SecurityUtil.logInUser(updatedAccount);
+                    providerSignInUtils.doPostSignUp(updatedAccount.getEmail(), webRequest);
+                    mav.setViewName("redirect:/main");
+                }
+
+                return mav;
+            } else { // There exists no account yet for the userProfileEmail
+                // Create new acc
+                Account newAcc = new Account();
+
+                newAcc.setEmail(userProfileEmail);
+                newAcc.setPassword(UUID.randomUUID().toString());
+                Set<SocialProvider> socialProviders = new HashSet<SocialProvider>();
+                socialProviders.add(new SocialProvider(socialProviderName));
+                newAcc.setAccSocialProviders(socialProviders);
+                newAcc.setEnabled(true);
+
+                try {
+                    Account createdAcc = accountService.createAccount(newAcc);
+                    if (createdAcc != null) {
+                        // Acc created
+                        SecurityUtil.logInUser(createdAcc);
+                        providerSignInUtils.doPostSignUp(createdAcc.getEmail(), webRequest);
+                        mav.setViewName("redirect:/main");
+                        return mav;
+                    }
+                } catch (EmailExistsException eee) {
+                    mav.addObject("error", messages.getMessage("social.registration.idExists", null, webRequest.getLocale()));
+                    mav.setViewName("redirect:/login");
+                }
+            }
+
+           /* Account newAcc = new Account();
 
             // TODO consider changing it to different id
             newAcc.setEmail(connection.getProfileUrl());
@@ -325,12 +386,12 @@ public class AccountController {
                     SecurityUtil.logInUser(acc);
                     providerSignInUtils.doPostSignUp(acc.getEmail(), webRequest);
                     mav.setViewName("redirect:/main");
-            }
+               }
             } catch(EmailExistsException eee) {
                 mav.addObject("error", messages.getMessage("social.registration.idExists", null, webRequest.getLocale()));
                 mav.setViewName("redirect:/login");
                 //eee.printStackTrace();
-            }
+            }*/
 
         } else {
             String message = messages.getMessage("social.sign.in.failure", null, webRequest.getLocale());

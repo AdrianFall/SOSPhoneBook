@@ -15,7 +15,7 @@ public class SecurityUtil {
                 .id(acc.getId())
                 .password(acc.getPassword())
                 .roles(acc.getAccRoles())
-                .socialSignInProvider(acc.getSignInProvider())
+                .socialSignInProviders(acc.getAccSocialProviders())
                 .username(acc.getEmail())
                 .build();
 

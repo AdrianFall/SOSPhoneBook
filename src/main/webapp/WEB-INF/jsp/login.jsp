@@ -76,12 +76,6 @@
         <div class="facebook-link">
           <a href="${pageContext.request.contextPath}/auth/facebook?scope=email" class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook"></i><spring:message code="social.facebook.sign.in.button"/></a>
         </div>
-        <%--<div class="fb-login-button" data-max-rows="1" data-onlogin="onFacebookLogin" data-size="medium" data-show-faces="false" data-auto-logout-link="false"><spring:message code="social.facebook.sign.in.button"/></div>--%>
-        <div class="twitter-link">
-          <a href="${pageContext.request.contextPath}/auth/twitter" class="btn btn-block btn-social btn-twitter">
-            <i class="fa fa-twitter"></i> <spring:message code="social.twitter.sign.in.button"/>
-          </a>
-        </div>
 
         <%--<div class="google-link">
           <a href="${pageContext.request.contextPath}/auth/google?scope=email&redirect_uri=${pageContext.request.contextPath}/social/register" class="btn btn-block btn-social btn-google">
@@ -90,7 +84,7 @@
         </div>--%>
 
         <div class="linkedin-link">
-          <a href="${pageContext.request.contextPath}/auth/linkedin" class="btn btn-block btn-social btn-linkedin">
+          <a href="${pageContext.request.contextPath}/auth/linkedin?scope=r_emailaddress" class="btn btn-block btn-social btn-linkedin">
             <i class="fa fa-linkedin"></i> <spring:message code="social.linkedin.sign.in.button"/>
           </a>
         </div>
