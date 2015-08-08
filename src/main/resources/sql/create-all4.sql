@@ -103,6 +103,9 @@ create table social_provider(
 
 INSERT INTO social_provider(provider_name) VALUES ('FACEBOOK');
 INSERT INTO social_provider(provider_name) VALUES ('LINKEDIN');
+INSERT INTO social_provider(provider_name) VALUES ('GITHUB');
+INSERT INTO social_provider(provider_name) VALUES ('GOOGLE');
+INSERT INTO social_provider(provider_name) VALUES ('PIXELPIN');
 
 create table accounts_social_providers(
   account_id bigint NOT NULL,

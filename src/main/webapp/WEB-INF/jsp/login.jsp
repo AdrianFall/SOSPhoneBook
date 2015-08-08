@@ -77,17 +77,44 @@
           <a href="${pageContext.request.contextPath}/auth/facebook?scope=email" class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook"></i><spring:message code="social.facebook.sign.in.button"/></a>
         </div>
 
-        <%--<div class="google-link">
-          <a href="${pageContext.request.contextPath}/auth/google?scope=email&redirect_uri=${pageContext.request.contextPath}/social/register" class="btn btn-block btn-social btn-google">
+        <div class="google-link">
+          <form name="go_signin" id="go_signin" action="${pageContext.request.contextPath}/auth/google" method="GET" class="float-left">
+
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            <input type="hidden" name="scope" value="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/plus.login email" />
+            <input type="hidden" name="redirect_uri" value="http://template-auth.duckdns.org/social/register"/>
+            <button type="submit">Send</button>
+          </form>
+          <%--<a href="${pageContext.request.contextPath}/auth/google?redirect_uri=http://template-auth.duckdns.org/main&scope=email" class="btn btn-block btn-social btn-google">
             <i class="fa fa-google"></i> <spring:message code="social.google.sign.in.button"/>
-          </a>
-        </div>--%>
+          </a>--%>
+        </div>
+
+        <div class="pixel-pin">
+          <%--<a href=u"https://login.pixelpin.co.k/OAuth2/Flogin.aspx?client_id=">
+            <spring:message code="pixelpin.client.id"
+          </a>--%>
+          <%--<form name="pixpin_signin" id="pixpin_signin" method="post" action="${pageContext.request.contextPath}/auth/pixelpin">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            <input type="hidden" name="client_id"  value="G7U6MS2CAS028UV5VCLNHFP1VQNIGN">
+            <input type="hidden" name="redirect_uri"  value="http://template-auth.duckdns.org/auth/pixelpin">
+            <input type="hidden" name="response_type"  value="code">
+            <button type="submit">Send</button>
+          </form>--%>
+          <a href="${pageContext.request.contextPath}/auth/pixelpin">Pixelpin</a>
+        </div>
 
         <div class="linkedin-link">
           <a href="${pageContext.request.contextPath}/auth/linkedin?scope=r_emailaddress" class="btn btn-block btn-social btn-linkedin">
             <i class="fa fa-linkedin"></i> <spring:message code="social.linkedin.sign.in.button"/>
           </a>
         </div>
+
+        <%--<div class="github-link">
+          <a href="${pageContext.request.contextPath}/auth/github?scope=user:email" class="btn btn-block btn-social btn-github">
+            <i class="fa fa-github"></i> <spring:message code="social.github.sign.in.button"/>
+          </a>
+        </div>--%>
 
       </div>
 
