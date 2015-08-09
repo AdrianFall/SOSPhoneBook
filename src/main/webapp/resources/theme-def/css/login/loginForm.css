@@ -19,6 +19,8 @@ form {line-height: 160%; }
 .facebook-link a:hover { color: #f9f2f4; }
 .linkedin-link { margin-bottom: 2px;}
 .linkedin-link a:hover { color:#f9f2f4; }
+.github-link {margin-bottom: 2px;}
+.github-link a:hover {color:#f9f2f4;}
 .submit {
     margin-left: 120px;
     margin-right:auto;
