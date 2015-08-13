@@ -490,17 +490,6 @@ public class AccountController {
         return mav;
     }
 
-    @RequestMapping(value = "/signin", method = RequestMethod.GET)
-    public ModelAndView signIn(@RequestParam(value = "error", required = false) String error) {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("redirect:/login");
-        if (error != null) {
-            System.out.println("Error : " + error);
-        } else
-            System.out.println("No errror");
-        return mav;
-    }
-
     @RequestMapping(value = "/social/register", method = RequestMethod.GET)
     public ModelAndView createSocialAccount(WebRequest webRequest, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();

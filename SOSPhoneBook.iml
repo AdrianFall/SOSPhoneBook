@@ -99,7 +99,7 @@
     <orderEntry type="library" name="Maven: org.springframework.social:spring-social-web:1.1.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.social:spring-social-facebook:2.0.1.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.social:spring-social-google:1.0.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.social:spring-social-google:1.0.0.RC1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.social:spring-social-linkedin:1.0.1.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.social:spring-social-github:1.0.0.BUILD-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: jstl:jstl:1.2" level="project" />

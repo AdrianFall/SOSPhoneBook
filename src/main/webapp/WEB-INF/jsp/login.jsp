@@ -78,16 +78,9 @@
         </div>
 
         <div class="google-link">
-          <form name="go_signin" id="go_signin" action="${pageContext.request.contextPath}/auth/google" method="GET" class="float-left">
-
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-            <input type="hidden" name="scope" value="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/plus.login email" />
-            <input type="hidden" name="redirect_uri" value="http://template-auth.duckdns.org/social/register"/>
-            <button type="submit">Send</button>
-          </form>
-          <%--<a href="${pageContext.request.contextPath}/auth/google?redirect_uri=http://template-auth.duckdns.org/main&scope=email" class="btn btn-block btn-social btn-google">
+          <a href="${pageContext.request.contextPath}/auth/google?scope=email" class="btn btn-block btn-social btn-google">
             <i class="fa fa-google"></i> <spring:message code="social.google.sign.in.button"/>
-          </a>--%>
+          </a>
         </div>
 
         <div class="pixel-pin">
