@@ -18,6 +18,7 @@
 
     <!-- Ensures that configuration properties are read from a property file -->
     <context:property-placeholder location="classpath:/properties/application.properties"/>
+    <context:property-placeholder location="classpath:/properties/log4j.properties"/>
 
 
     <!--
