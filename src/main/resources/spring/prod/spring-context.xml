@@ -20,6 +20,11 @@
    <context:component-scan base-package="core.event"/>
 
     <context:property-placeholder location="classpath:/properties/application.properties"/>
+    <!--<context:property-placeholder location="classpath:/properties/hibernate.properties"/>-->
+    <!--<context:property-placeholder
+        location="classpath:/properties/application.properties,
+          classpath:/properties/hibernate.properties"
+        ignore-unresolvable="true"/>-->
 
     <mvc:annotation-driven />
 
@@ -31,29 +36,65 @@
           <property name="validationQuery" value="${dataSource.validationQuery}"/>
    </bean>
 
-   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+   <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
           <property name="dataSource" ref="dataSource"/>
           <property name="jpaVendorAdapter">
-                 <!-- Use Hibernate as JPA impl -->
+                 &lt;!&ndash; Use Hibernate as JPA impl &ndash;&gt;
                  <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
           </property>
 
           <property name="jpaProperties">
                  <map>
-                        <!-- Specifies the properties for JPA how to generate the db -->
-                       <!-- <entry key="hibernate.hbm2ddl.auto" value="create"/> --><!-- Created and Dropped along with SessionFactory Create and Close-->
-                        <!-- Show SQL -->
+                        &lt;!&ndash; Specifies the properties for JPA how to generate the db &ndash;&gt;
+                       &lt;!&ndash; <entry key="hibernate.hbm2ddl.auto" value="create"/> &ndash;&gt;&lt;!&ndash; Created and Dropped along with SessionFactory Create and Close&ndash;&gt;
+                        &lt;!&ndash; Show SQL &ndash;&gt;
                         <entry key="hibernate.show_sql" value="true"/>
                  </map>
           </property>
-          <!-- Specifies the directory where the entities are located -->
+          &lt;!&ndash; Specifies the directory where the entities are located &ndash;&gt;
           <property name="packagesToScan" value="core.entity"/>
    </bean>
 
-   <!-- Enables the configuration of transactional behavior based on annotations -->
-   <tx:annotation-driven/>  <!--looks for @Transactional on beans in the same application context they are defined in. This means that, if you put annotation driven configuration in a WebApplicationContext for a DispatcherServlet, it only checks for @Transactional beans in your controllers, and not your services. See Section 17.2, “The DispatcherServlet” for more information.-->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>-->
+    <!-- Hibernate -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="core.entity"/>
+        <property name="namingStrategy" ref="namingStrategy"/>
 
-   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.order_inserts">true</prop>
+                <prop key="hibernate.order_updates">true</prop>
+                <prop key="hibernate.jdbc.batch_size">2</prop>
+
+                <prop key="hibernate.validator.apply_to_ddl">false</prop>
+                <prop key="hibernate.validator.autoregister_listeners">false</prop>
+
+                <prop key="javax.persistence.validation.mode">none</prop>
+
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                <prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
+                <prop key="hibernate.generate.statistics">${hibernate.generate.statistics}</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+
+                <prop key="connection.pool_size">5</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="namingStrategy" class="org.hibernate.cfg.ImprovedNamingStrategy"/>
+
+    <!-- Enables the configuration of transactional behavior based on annotations -->
+    <tx:annotation-driven/>  <!--looks for @Transactional on beans in the same application context they are defined in. This means that, if you put annotation driven configuration in a WebApplicationContext for a DispatcherServlet, it only checks for @Transactional beans in your controllers, and not your services. See Section 17.2, “The DispatcherServlet” for more information.-->
+
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 
    <!-- Authentication -->
     <!--<bean id="accountDetailsService" class="core.service.security.UserDetailsServiceImpl"/>-->
