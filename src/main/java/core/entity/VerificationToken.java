@@ -13,7 +13,8 @@ public class VerificationToken {
     // 24 h
     private static final int DEFAULT_EXPIRATION = 60 * 24;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
     private String token;
