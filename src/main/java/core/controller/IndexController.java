@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/index")
 public class IndexController {
 
-    @RequestMapping(method = RequestMethod.GET)
 
+    @RequestMapping(method = RequestMethod.GET)
     public String index() {
         final Log logger = LogFactory.getLog(getClass());
         if (logger != null) {

@@ -9,7 +9,7 @@
     http://www.springframework.org/schema/tx
     http://www.springframework.org/schema/tx/spring-tx.xsd
     http://www.springframework.org/schema/mvc
-    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+    http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -19,6 +19,8 @@
 
    <context:component-scan base-package="core.event"/>
 
+    <context:component-scan base-package="config" />
+
     <context:property-placeholder location="classpath:/properties/application.properties"/>
     <!--<context:property-placeholder location="classpath:/properties/hibernate.properties"/>-->
     <!--<context:property-placeholder
@@ -27,7 +29,14 @@
         ignore-unresolvable="true"/>-->
 
     <mvc:annotation-driven />
+    <!--Global CORS configuration-->
+    <!--<mvc:cors>
+        <mvc:mapping path="/**"
+                     allowed-origins="http://localhost:63343"
+                     exposed-headers="Access-Control-Allow-Origin, Access-Control-Allow-Credentials"
+                     allow-credentials="true"/>
 
+    </mvc:cors>-->
    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
           <property name="username" value="${dataSource.username}"/>
           <property name="password" value="${dataSource.password}"/>
@@ -141,6 +150,8 @@
 
     <bean id="webAuthenticationEntryPoint" class="web.authentication.WebAuthenticationEntryPoint"/>
 
+    <bean id="customCORSFilter" class="filter.SimpleCORSFilter"/>
+
     <!-- OLD - authentication handler-->
     <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
 
@@ -157,5 +168,4 @@
     </bean>
 
     <mvc:resources mapping="/resources/**" location="/resources/theme-def/" cache-period="31556926"/>
-    
 </beans>

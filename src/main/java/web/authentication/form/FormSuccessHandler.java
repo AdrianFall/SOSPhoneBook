@@ -1,5 +1,6 @@
 package web.authentication.form;
 
+import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -9,6 +10,8 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,13 +46,23 @@ public class FormSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     }
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
-        String targetUrl = determineTargetUrl(authentication);
-
-        redirectStrategy.sendRedirect(request, response, targetUrl);
+        String targetUrl = determineTargetUrl(request, authentication);
+        if (targetUrl.equals("isCrossOrigin")) {
+            System.out.println("isCrossOrigin url");
+            response.setStatus(HttpServletResponse.SC_OK);
+            JSONObject json = new JSONObject();
+            json.put("email", authentication.getName());
+            System.out.println("json.put email = " + authentication.getName());
+            response.setContentType("application/json");
+            response.getWriter().write(json.toString());
+            //response.addHeader("Access-Control-Allow-Origin", "http://localhost:63343");
+            //response.addHeader("Access-Control-Allow-Credentials", "true");
+        } else
+            redirectStrategy.sendRedirect(request, response, targetUrl);
 
     }
 
-    protected String determineTargetUrl(Authentication authentication) {
+    protected String determineTargetUrl(HttpServletRequest request, Authentication authentication) {
         boolean isUser = false;
         boolean isAdmin = false;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -62,8 +75,12 @@ public class FormSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 break;
             }
         }
-
-        if (isAdmin) {
+        String isCrossOriginParam = request.getParameter("isCrossOrigin");
+        boolean isCrossOrigin = (isCrossOriginParam != null && isCrossOriginParam.equals("true")) ? true : false;
+        System.out.println("crossOriginParam = " + isCrossOriginParam);
+        if ((isAdmin || isUser) && isCrossOrigin) {
+            return "isCrossOrigin";
+        } else if (isAdmin) {
             return "/admin.html";
         } else if (isUser) {
             return "/main.html";

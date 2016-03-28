@@ -6,14 +6,14 @@
        xmlns:facebook="http://www.springframework.org/schema/social/facebook"
        xmlns:google="http://www.springframework.org/schema/social/google"
        xmlns:linkedin="http://www.springframework.org/schema/social/linkedin"
-       xmlns:github="http://www.springframework.org/schema/social/github"
+       xmlns:pixelpin="http://www.springframework.org/schema/social/pixelpin"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        http://www.springframework.org/schema/social http://www.springframework.org/schema/social/spring-social.xsd
        http://www.springframework.org/schema/social/facebook http://www.springframework.org/schema/social/spring-social-facebook.xsd
        http://www.springframework.org/schema/social/google http://www.springframework.org/schema/social/spring-social-google.xsd
        http://www.springframework.org/schema/social/linkedin http://www.springframework.org/schema/social/spring-social-linkedin.xsd
-       http://www.springframework.org/schema/social/github http://www.springframework.org/schema/social/spring-social-github.xsd
+       http://www.springframework.org/schema/social/pixelpin http://www.springframework.org/schema/social/spring-social-pixelpin.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!-- Ensures that configuration properties are read from a property file -->
@@ -127,7 +127,7 @@
         </property>
     </bean>-->
 
-    <bean id="connectionFactoryLocator" class="org.springframework.social.security.SocialAuthenticationServiceRegistry">
+    <!--<bean id="connectionFactoryLocator" class="org.springframework.social.security.SocialAuthenticationServiceRegistry">
         <property name="authenticationServices">
             <list>
                 <bean class="org.springframework.social.facebook.security.FacebookAuthenticationService">
@@ -135,7 +135,7 @@
                     <constructor-arg value="${facebook.app.secret}" />
                 </bean>
 
-                <bean class="oauth2.pixelpin.security.PixelPinAuthenticationService">
+                <bean class="org.springframework.social.pixelpin.security.PixelPinAuthenticationService">
                     <constructor-arg value="${pixelpin.client.id}"/>
                     <constructor-arg value="${pixelpin.client.secret}"/>
                 </bean>
@@ -151,14 +151,14 @@
                 </bean>
             </list>
         </property>
-    </bean>
+    </bean>-->
 
-    <!--<facebook:config app-id="${facebook.app.id}" app-secret="${facebook.app.secret}"/>
+    <facebook:config app-id="${facebook.app.id}" app-secret="${facebook.app.secret}"/>
     <google:config app-id="${google.client.id}" app-secret="${google.client.secret}"/>
     <linkedin:config app-id="${linkedin.client.id}" app-secret="${linkedin.client.secret}"/>
-    <github:config app-id="${github.client.id}" app-secret="${github.client.secret}"/>-->
+    <pixelpin:config app-id="${pixelpin.client.id}" app-secret="${pixelpin.client.secret}"/>
+    <!--<github:config app-id="${github.client.id}" app-secret="${github.client.secret}"/>-->
 
-    <!--<google:config app-id="${google.client.id}" app-secret="${google.client.secret}"/>-->
 
 
 

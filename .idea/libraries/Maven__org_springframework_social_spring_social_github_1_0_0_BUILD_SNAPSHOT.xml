@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.springframework.social:spring-social-github:1.0.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/spring-social-github-1.0.0.BUILD-20150814.081519-1072.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/spring-social-github-1.0.0.BUILD-20160328.081518-1291.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/spring-social-github-1.0.0.BUILD-20150814.081519-1072-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/spring-social-github-1.0.0.BUILD-20160328.081518-1291-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/spring-social-github-1.0.0.BUILD-20150814.081519-1072-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/spring-social-github-1.0.0.BUILD-20160328.081518-1291-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -30,6 +30,13 @@
 
         <!-- Adds social authentication filter to the Spring Security filter chain. -->
         <sec:custom-filter ref="socialAuthenticationFilter" before="PRE_AUTH_FILTER" />
+        <!--<sec:custom-filter ref="customCORSFilter" after="PRE_AUTH_FILTER"/>-->
+        <sec:custom-filter ref="customCORSFilter" after="SECURITY_CONTEXT_FILTER"/>
+        <!--<sec:custom-filter ref="customCORSFilter" after="FORM_LOGIN_FILTER"/>-->
+
+
+        <!-- Disable csrf -->
+        <csrf disabled="true"/>
 
     </http>
 
@@ -44,4 +51,5 @@
 
     <!-- Turn on the security annotations for defining the roles -->
     <global-method-security secured-annotations="enabled" />
+
 </beans:bean>
